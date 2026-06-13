@@ -26,6 +26,24 @@ build/
 
 # Test reports
 analysis_results.md
+/tests
+/scratch
 
 # VS Code Extensions
 .qodo/
+
+ARCHITECTURE_BLUEPRINT.md
+board_decision_output.json
+CONSTITUTION_AND_MEMORY_VISION.md
+constitution_evolution_output.json
+CONSTITUTIONAL_EVOLUTION_VISION.md
+DECISION_PIPELINE_DESIGN.md
+DEMO_FEATURES_SUMMARY.md
+EXECUTIVE_BOARD_VISION.md
+governance_intelligence_output.json
+GOVERNANCE_INTELLIGENCE_VISION.md
+GOVERNANCE_LAYER_SUMMARY.md
+MICROSOFT_IQ_INTEGRATION_PLAN.md
+PIPELINE_MIGRATION_SUMMARY.md
+PROCUREMENT_BOARD_DEMO.md
+TRUST_CONSOLE_IQ_ROADMAP.md
