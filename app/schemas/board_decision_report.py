@@ -8,6 +8,8 @@ from app.schemas.organizational_memory_report import OrganizationalMemoryReport
 from app.schemas.enterprise_simulation_report import EnterpriseSimulationReport
 from app.schemas.governance_attack_report import GovernanceAttackReport
 from app.schemas.multi_constitution_report import MultiConstitutionReport
+from app.schemas.regulatory_intelligence_report import RegulatoryIntelligenceReport
+
 
 
 class VoteType(str, Enum):
@@ -52,9 +54,11 @@ class BoardDecisionReport(BaseModel):
     enterprise_simulation: Optional[EnterpriseSimulationReport] = Field(None, description="Enterprise-wide impact simulation engine report.")
     governance_attack_report: Optional[GovernanceAttackReport] = Field(None, description="Adversarial governance penetration testing report.")
     multi_constitution_report: Optional[MultiConstitutionReport] = Field(None, description="Multi-constitution evaluation scorecard report.")
+    regulatory_intelligence_report: Optional[RegulatoryIntelligenceReport] = Field(None, description="Regulatory intelligence layer compliance evaluation report.")
 
     class Config:
         from_attributes = True
+
 
 
 

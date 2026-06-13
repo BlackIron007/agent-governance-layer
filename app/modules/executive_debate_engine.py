@@ -21,6 +21,8 @@ from app.modules.executive_constitutional_layer import ExecutiveConstitutionalLa
 from app.enterprise_simulation.enterprise_simulation_engine import EnterpriseSimulationEngine
 from app.adversarial_lab.attack_simulation_orchestrator import AttackSimulationOrchestrator
 from app.constitution_framework.constitution_engine import ConstitutionEngine
+from app.regulatory_intelligence.regulatory_orchestrator import RegulatoryOrchestrator
+
 
 
 
@@ -133,7 +135,8 @@ class ExecutiveDebateEngine:
             constitutional_violations=constitutional_violations
         )
 
-        return BoardDecisionReport(
+        # Build partial report so regulatory engines can inspect outcomes, memory, attacks, and simulation
+        partial_report = BoardDecisionReport(
             board_decision_id=board_decision_id,
             timestamp=datetime.utcnow(),
             decision_context=payload,
@@ -149,6 +152,18 @@ class ExecutiveDebateEngine:
             governance_attack_report=attack_report,
             multi_constitution_report=multi_const_report
         )
+
+        # 12. Run Regulatory Intelligence Review
+        regulatory_orchestrator = RegulatoryOrchestrator()
+        regulatory_report = regulatory_orchestrator.run_regulatory_review(
+            payload=payload,
+            report=partial_report
+        )
+
+        # Attach final compliance report
+        partial_report.regulatory_intelligence_report = regulatory_report
+        return partial_report
+
 
 
 
