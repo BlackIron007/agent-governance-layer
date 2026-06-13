@@ -18,6 +18,8 @@ from app.services.model_client import ModelClient
 from app.memory.precedent_retriever import PrecedentRetriever
 from app.memory.organizational_memory_engine import OrganizationalMemoryEngine
 from app.modules.executive_constitutional_layer import ExecutiveConstitutionalLayer
+from app.enterprise_simulation.enterprise_simulation_engine import EnterpriseSimulationEngine
+
 
 logger = logging.getLogger("verifier")
 
@@ -102,6 +104,15 @@ class ExecutiveDebateEngine:
         # 8. Generate Outcome Forecast Report (5 Alternative Futures)
         outcome_forecast = self._generate_forecast(payload, votes)
 
+        # 9. Run Enterprise Impact Simulation Engine
+        simulation_engine = EnterpriseSimulationEngine()
+        enterprise_sim = simulation_engine.run_simulation(
+            payload=payload,
+            board_votes=votes,
+            constitutional_violations=constitutional_violations,
+            precedents=precedents
+        )
+
         return BoardDecisionReport(
             board_decision_id=board_decision_id,
             timestamp=datetime.utcnow(),
@@ -113,8 +124,10 @@ class ExecutiveDebateEngine:
             outcome_forecast=outcome_forecast,
             constitutional_status=constitutional_status,
             constitutional_violations=constitutional_violations,
-            organizational_memory_report=memory_report
+            organizational_memory_report=memory_report,
+            enterprise_simulation=enterprise_sim
         )
+
 
     def _generate_forecast(self, payload: DecisionPayload, votes: List[BoardMemberVote]) -> OutcomeForecastReport:
         votes_text = "\n".join([f"- {v.member_name}: Vote={v.vote.value}, Rationale={v.rationale}" for v in votes])

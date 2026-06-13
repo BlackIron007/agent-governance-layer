@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime
 from enum import Enum
 from app.schemas.decision_payload import DecisionPayload
 from app.schemas.outcome_forecast_report import OutcomeForecastReport
 from app.schemas.organizational_memory_report import OrganizationalMemoryReport
+from app.schemas.enterprise_simulation_report import EnterpriseSimulationReport
 
 class VoteType(str, Enum):
     APPROVED = "APPROVED"
@@ -45,6 +46,8 @@ class BoardDecisionReport(BaseModel):
     constitutional_status: str = Field(..., description="Constitutional compliance score/status.")
     constitutional_violations: List[str] = Field(default_factory=list, description="Constitutional principle violations triggered.")
     organizational_memory_report: OrganizationalMemoryReport = Field(..., description="Details of precedents searched and guided rules.")
+    enterprise_simulation: Optional[EnterpriseSimulationReport] = Field(None, description="Enterprise-wide impact simulation engine report.")
 
     class Config:
         from_attributes = True
+
