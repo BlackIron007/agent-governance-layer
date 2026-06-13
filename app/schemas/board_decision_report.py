@@ -7,6 +7,8 @@ from app.schemas.outcome_forecast_report import OutcomeForecastReport
 from app.schemas.organizational_memory_report import OrganizationalMemoryReport
 from app.schemas.enterprise_simulation_report import EnterpriseSimulationReport
 from app.schemas.governance_attack_report import GovernanceAttackReport
+from app.schemas.multi_constitution_report import MultiConstitutionReport
+
 
 class VoteType(str, Enum):
     APPROVED = "APPROVED"
@@ -49,8 +51,10 @@ class BoardDecisionReport(BaseModel):
     organizational_memory_report: OrganizationalMemoryReport = Field(..., description="Details of precedents searched and guided rules.")
     enterprise_simulation: Optional[EnterpriseSimulationReport] = Field(None, description="Enterprise-wide impact simulation engine report.")
     governance_attack_report: Optional[GovernanceAttackReport] = Field(None, description="Adversarial governance penetration testing report.")
+    multi_constitution_report: Optional[MultiConstitutionReport] = Field(None, description="Multi-constitution evaluation scorecard report.")
 
     class Config:
         from_attributes = True
+
 
 

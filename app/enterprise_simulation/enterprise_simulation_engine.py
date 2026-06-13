@@ -52,9 +52,10 @@ class EnterpriseSimulationEngine:
         # Fallbacks if none found
         if not board_assumptions:
             board_assumptions = [
-                f"Proposed savings of {payload.metadata.get('saving_pct', 15)}% are achievable.",
+                f"Proposed savings of {payload.raw_payload.get('saving_pct', 15)}% are achievable.",
                 "Vendor capability matches the required service delivery standard."
             ]
+
 
         # Extract precedents keys
         precedent_ids = [p.precedent_id for p in precedents]

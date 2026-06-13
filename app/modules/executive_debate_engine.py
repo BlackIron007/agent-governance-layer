@@ -20,6 +20,8 @@ from app.memory.organizational_memory_engine import OrganizationalMemoryEngine
 from app.modules.executive_constitutional_layer import ExecutiveConstitutionalLayer
 from app.enterprise_simulation.enterprise_simulation_engine import EnterpriseSimulationEngine
 from app.adversarial_lab.attack_simulation_orchestrator import AttackSimulationOrchestrator
+from app.constitution_framework.constitution_engine import ConstitutionEngine
+
 
 
 
@@ -123,6 +125,14 @@ class ExecutiveDebateEngine:
             constitutional_violations=constitutional_violations
         )
 
+        # 11. Run Multi-Constitution Framework Engine Evaluation
+        constitution_engine = ConstitutionEngine()
+        multi_const_report = constitution_engine.run_evaluations(
+            payload=payload,
+            board_votes=votes,
+            constitutional_violations=constitutional_violations
+        )
+
         return BoardDecisionReport(
             board_decision_id=board_decision_id,
             timestamp=datetime.utcnow(),
@@ -136,8 +146,10 @@ class ExecutiveDebateEngine:
             constitutional_violations=constitutional_violations,
             organizational_memory_report=memory_report,
             enterprise_simulation=enterprise_sim,
-            governance_attack_report=attack_report
+            governance_attack_report=attack_report,
+            multi_constitution_report=multi_const_report
         )
+
 
 
 
