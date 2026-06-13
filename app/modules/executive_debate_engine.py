@@ -19,6 +19,8 @@ from app.memory.precedent_retriever import PrecedentRetriever
 from app.memory.organizational_memory_engine import OrganizationalMemoryEngine
 from app.modules.executive_constitutional_layer import ExecutiveConstitutionalLayer
 from app.enterprise_simulation.enterprise_simulation_engine import EnterpriseSimulationEngine
+from app.adversarial_lab.attack_simulation_orchestrator import AttackSimulationOrchestrator
+
 
 
 logger = logging.getLogger("verifier")
@@ -113,6 +115,14 @@ class ExecutiveDebateEngine:
             precedents=precedents
         )
 
+        # 10. Run Adversarial Governance Lab Analysis
+        orchestrator = AttackSimulationOrchestrator()
+        attack_report = orchestrator.run_adversarial_analysis(
+            payload=payload,
+            board_votes=votes,
+            constitutional_violations=constitutional_violations
+        )
+
         return BoardDecisionReport(
             board_decision_id=board_decision_id,
             timestamp=datetime.utcnow(),
@@ -125,8 +135,10 @@ class ExecutiveDebateEngine:
             constitutional_status=constitutional_status,
             constitutional_violations=constitutional_violations,
             organizational_memory_report=memory_report,
-            enterprise_simulation=enterprise_sim
+            enterprise_simulation=enterprise_sim,
+            governance_attack_report=attack_report
         )
+
 
 
     def _generate_forecast(self, payload: DecisionPayload, votes: List[BoardMemberVote]) -> OutcomeForecastReport:
