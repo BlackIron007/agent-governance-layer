@@ -1,56 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
+  const links = [
+    { label: "Home", path: "/" },
+    { label: "Command Center", path: "/command-center" },
+    { label: "Decision History", path: "/decision-history" },
+    { label: "Intelligence Hub", path: "/intelligence" },
+  ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <button
-          onClick={() => scrollTo("hero")}
-          className="text-base font-medium tracking-tight text-primary"
-        >
-          Veritas AI
-        </button>
+    <nav className="fixed top-0 w-full z-50 bg-[#fff9ee]/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-[#b9b29c]/15">
+      <div className="flex justify-between items-center px-12 h-16 w-full max-w-[1600px] mx-auto">
+        <Link href="/" className="flex items-center gap-2 text-[#715b3e] dark:text-[#ebe2cb] hover:opacity-80 transition-opacity">
+          <ShieldCheck strokeWidth={1.5} className="w-5 h-5" />
+          <div className="text-lg font-normal tracking-tighter">Trust Console IQ</div>
+        </Link>
 
-        <div className="flex items-center gap-8">
-          {[
-            { label: "How It Works", id: "how-it-works" },
-            { label: "Features", id: "features" },
-            { label: "FAQ", id: "faq" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollTo(item.id)}
-              className="text-sm text-textSecondary hover:text-primary transition-colors duration-200"
-            >
-              {item.label}
-            </button>
-          ))}
-          <button
-            onClick={() => scrollTo("demo")}
-            className="text-sm text-background bg-primary px-4 py-1.5 rounded hover:bg-secondary transition-colors duration-200"
-          >
-            Try It Live
-          </button>
+        <div className="flex gap-8 items-center">
+          {links.map((link) => {
+            const isActive = pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`font-light tracking-tight text-xs uppercase transition-colors hover:text-[#715b3e] ${
+                  isActive
+                    ? "text-[#715b3e] border-b border-[#715b3e] pb-0.5 font-medium"
+                    : "text-[#6b5d4f]"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>
