@@ -1,27 +1,30 @@
 "use client";
 
-import { Check, Loader } from "lucide-react";
-
-interface Step {
-  label: string;
-  description: string;
-  status: "completed" | "current" | "upcoming";
-}
+import { useState } from "react";
+import { Check, Loader, ChevronDown, ChevronUp } from "lucide-react";
+import { StepperNode } from "../lib/mockData";
 
 interface NarrativeTimelineStepperProps {
-  steps: Step[];
+  steps: StepperNode[];
 }
 
 export default function NarrativeTimelineStepper({ steps }: NarrativeTimelineStepperProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const toggleStep = (idx: number) => {
+    setExpandedIndex(expandedIndex === idx ? null : idx);
+  };
+
   return (
     <div className="border border-outline-variant/15 p-8 bg-[#fff9ee] shadow-sm w-full">
       <div className="mb-6">
-        <h4 className="text-[10px] uppercase tracking-widest text-[#817a67] font-light">Governance Narrative Pathway</h4>
-        <p className="text-[11px] text-[#6b5d4f] font-light mt-0.5">Automated sequence of audit verification and multi-agent consensus checks.</p>
+        <h4 className="text-[10px] uppercase tracking-widest text-[#817a67] font-light">Governance Narrative Pathway Replay</h4>
+        <p className="text-[11px] text-[#6b5d4f] font-light mt-0.5">Click any node to replay the execution trace and view agent processing details.</p>
       </div>
 
       <div className="relative pl-6 border-l border-[#b9b29c]/30 space-y-6 ml-2.5">
         {steps.map((step, idx) => {
+          const isNodeExpanded = expandedIndex === idx;
           let markerBg = "bg-[#fff9ee] border-[#b9b29c]";
           let markerContent = null;
           let textOpacity = "opacity-50";
@@ -49,12 +52,21 @@ export default function NarrativeTimelineStepper({ steps }: NarrativeTimelineSte
               </div>
 
               <div className={`${textOpacity} space-y-1`}>
-                <h5 className={`text-xs uppercase tracking-wider ${labelWeight}`}>
-                  {step.label}
-                </h5>
-                <p className="text-xs font-light text-[#6b5d4f] leading-relaxed">
-                  {step.description}
-                </p>
+                <div 
+                  onClick={() => toggleStep(idx)}
+                  className="flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  <h5 className={`text-xs uppercase tracking-wider ${labelWeight}`}>
+                    {step.label} — <span className="font-light normal-case text-[#6b5d4f]">{step.summary}</span>
+                  </h5>
+                  {isNodeExpanded ? <ChevronUp className="w-3.5 h-3.5 text-[#817a67]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#817a67]" />}
+                </div>
+
+                {isNodeExpanded && (
+                  <div className="bg-surface-container-low/40 p-3 border border-[#b9b29c]/15 text-xs font-light text-[#6b5d4f] leading-relaxed animate-fadeIn mt-2">
+                    <strong>Execution Trace:</strong> {step.details}
+                  </div>
+                )}
               </div>
             </div>
           );
