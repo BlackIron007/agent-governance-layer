@@ -84,6 +84,45 @@ export default function VerdictHeroCard({ verdict, confidence, risk, evidence, t
         </div>
       </div>
 
+      {/* Executive Decision Memo Section */}
+      <div className="border border-[#b9b29c]/20 bg-[#fffbf2] p-5 space-y-3">
+        <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-1">
+          // Executive Decision Memo
+        </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-light text-[#6b5d4f] leading-relaxed">
+          <div className="space-y-1">
+            <span className="text-[9px] uppercase text-[#817a67] font-semibold block">Primary Cause</span>
+            <p className="text-[#373223] font-light">
+              {verdict === "BLOCKED" 
+                ? "Vendor X lacks standard SOC2 audit compliance and triggers unacceptable perimeter vulnerability flags." 
+                : verdict === "CONDITIONAL_ALLOW" 
+                ? "Emergency recovery parameters bypass MFA rules conditionally for a strict 2-hour window." 
+                : "All systems validation tests passed without high-severity conflicts."}
+            </p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-[9px] uppercase text-[#817a67] font-semibold block">Board Outcome</span>
+            <p className="text-[#373223] font-light">
+              {verdict === "BLOCKED" ? "4 of 5 executives rejected proposal (Legal, CISO, and Procurement vetoes)." : "Unanimous approval registered."}
+            </p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-[9px] uppercase text-[#817a67] font-semibold block">Constitutional Conflict</span>
+            <p className="text-[#373223] font-light">
+              {verdict === "BLOCKED" ? "Security Constitution overrode Financial Constitution directives." : "No active conflicts resolved."}
+            </p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-[9px] uppercase text-[#817a67] font-semibold block">Regulatory & Forecast Status</span>
+            <p className="text-[#373223] font-light">
+              {verdict === "BLOCKED" 
+                ? "NIST RMF compliance failed. Simulation projects 8% post-deployment cost increase in failure cascade." 
+                : "Regulatory review verified. Projected downtime cost reduced."}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-3 gap-6 py-4 border-y border-[#b9b29c]/10">
         {renderDial(confidence, "Execution Confidence", "stroke-[#715b3e]", "stroke-[#eed0ac]/20")}
         {renderDial(risk, "Risk Exposure", "stroke-[#9e422c]", "stroke-[#9e422c]/10")}

@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Navbar from "../components/Navbar";
+import GlobalGovernanceTracker from "../components/GlobalGovernanceTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,13 +10,13 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Veritas AI — AI Response Verification",
+  title: "Trust Console IQ — Enterprise AI Governance Platform",
   description:
-    "Verify any AI response instantly. Veritas AI extracts claims, cross-references evidence, and scores trust in real time.",
+    "Trust Console IQ audits, challenges, simulates, and governs generative AI recommendations before they reach your customers, employees, vendors, regulators, or critical production systems.",
   openGraph: {
-    title: "Veritas AI — AI Response Verification",
+    title: "Trust Console IQ — Enterprise AI Governance Platform",
     description:
-      "Verify any AI response instantly. Extract claims, cross-reference evidence, and score trust.",
+      "Enterprise-grade AI governance: constitutional audit, adversarial stress-testing, regulatory compliance, and board-level decision oversight.",
     type: "website",
   },
 };
@@ -26,7 +28,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="bg-background text-text font-sans">{children}</body>
+      <body className="bg-background text-text font-sans">
+        <Navbar />
+        <GlobalGovernanceTracker />
+        {children}
+      </body>
     </html>
   );
 }

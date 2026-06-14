@@ -32,36 +32,41 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <section className="w-full mt-8 mb-20 animate-fadeIn" style={{ animationDelay: "200ms", animationFillMode: "both" }}>
-          <h2 className="text-3xl font-light text-center text-on-background mb-14 tracking-tighter">Governance Engine Layers</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto md:mx-0">
-                <FileSearch strokeWidth={1.5} className="w-5 h-5" />
+        <div className="w-full border-t border-outline-variant/10 my-4"></div>
+
+        {/* Dynamic Capability Reveal Flow */}
+        <section className="w-full mt-12 mb-20 animate-fadeIn" style={{ animationDelay: "200ms", animationFillMode: "both" }}>
+          <h2 className="text-3xl font-light text-center text-on-background mb-4 tracking-tighter">
+            How One Decision Gets Governed
+          </h2>
+          <p className="text-center text-xs text-[#817a67] font-mono uppercase tracking-widest mb-10">
+            Hover over nodes to explore active reasoning layers
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 relative">
+            {[
+              { id: "proposal", label: "Proposal", desc: "AI optimization proposal gets intercepted before executing." },
+              { id: "evidence", label: "Evidence Retrieval", desc: "Retrieve verified supplier compliance history." },
+              { id: "board", label: "Executive Board Debate", desc: "CISO, CFO, and Legal debate operational trade-offs." },
+              { id: "constitution", label: "Constitution Evaluation", desc: "Compare actions against active ESG & safety standards." },
+              { id: "adversarial", label: "Adversarial Attack Testing", desc: "Red-team simulations for reward-hacking exploits." },
+              { id: "simulation", label: "Enterprise Simulation", desc: "Monte Carlo projected downstream cost estimations." },
+              { id: "regulatory", label: "Regulatory Review", desc: "Verify NIST & SOC2 compliance criteria." },
+              { id: "verdict", label: "Verdict", desc: "Final immutable ledger record gets sealed." },
+            ].map((node, i) => (
+              <div 
+                key={node.id} 
+                className="bg-surface border border-outline-variant/15 p-4 text-center transition-all duration-300 relative group overflow-hidden"
+              >
+                <div className="text-[10px] font-mono text-[#715b3e] mb-1">Step 0{i + 1}</div>
+                <h4 className="text-xs font-semibold text-stone-700 leading-tight">{node.label}</h4>
+                
+                {/* Reveal on hover */}
+                <div className="absolute inset-0 bg-[#fffbf2] p-3 flex items-center justify-center text-[9px] leading-normal text-[#6b5d4f] font-light opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none border border-[#715b3e]/30">
+                  {node.desc}
+                </div>
               </div>
-              <h5 className="text-xs uppercase font-medium tracking-wider text-on-surface">Consensus Debate</h5>
-              <p className="text-sm leading-relaxed font-light text-secondary">
-                A multi-agent board consisting of CISO, CFO, Legal, Operations, and Procurement review the context and cast votes.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-full bg-[#3a684d]/10 flex items-center justify-center text-[#3a684d] mx-auto md:mx-0">
-                <Network strokeWidth={1.5} className="w-5 h-5" />
-              </div>
-              <h5 className="text-xs uppercase font-medium tracking-wider text-on-surface">Stress-Testing Lab</h5>
-              <p className="text-sm leading-relaxed font-light text-secondary">
-                Red-team attack engines simulate adversarial reward hacking, circular citation collusion, and biased anchoring exploits.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center text-error mx-auto md:mx-0">
-                <Scale strokeWidth={1.5} className="w-5 h-5" />
-              </div>
-              <h5 className="text-xs uppercase font-medium tracking-wider text-on-surface">Regulatory Verdict</h5>
-              <p className="text-sm leading-relaxed font-light text-secondary">
-                Rigorous legal audit templates enforce compliance with NIST AI Risk Management and Microsoft RAI guidelines.
-              </p>
-            </div>
+            ))}
           </div>
         </section>
 

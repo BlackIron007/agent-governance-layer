@@ -39,3 +39,49 @@
     display: none;
   }
 }
+
+/* ─── Skeleton / Loading Pulse ─────────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+.skeleton-pulse {
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  background: linear-gradient(90deg, #f5eddd 25%, #ede5cf 50%, #f5eddd 75%);
+  background-size: 200% 100%;
+}
+
+/* ─── Slide-in from bottom ─────────────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+/* ─── Demo Overlay fade ─────────────────────────────────────────────── */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-overlayFadeIn {
+  animation: overlayFadeIn 0.3s ease-out forwards;
+}
+
+/* ─── Ring progress animation ───────────────────────────────────────── */
+@keyframes ringDraw {
+  from { stroke-dashoffset: 999; }
+}
+.ring-animate {
+  animation: ringDraw 1.2s ease-out forwards;
+}
+
+/* ─── Threat card shimmer ───────────────────────────────────────────── */
+@keyframes threatPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(158, 66, 44, 0.0); }
+  50%       { box-shadow: 0 0 0 4px rgba(158, 66, 44, 0.08); }
+}
+.threat-pulse {
+  animation: threatPulse 2s ease-in-out infinite;
+}

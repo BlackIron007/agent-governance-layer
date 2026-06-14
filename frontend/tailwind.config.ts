@@ -71,9 +71,29 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        slideUp: {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        skeletonPulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
+        },
+        overlayFadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        threatPulse: {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(158, 66, 44, 0.0)" },
+          "50%": { boxShadow: "0 0 0 4px rgba(158, 66, 44, 0.08)" },
+        },
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-out forwards",
+        slideUp: "slideUp 0.4s ease-out forwards",
+        skeletonPulse: "skeletonPulse 1.8s ease-in-out infinite",
+        overlayFadeIn: "overlayFadeIn 0.3s ease-out forwards",
+        threatPulse: "threatPulse 2s ease-in-out infinite",
       },
     },
   },

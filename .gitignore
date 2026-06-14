@@ -29,6 +29,7 @@ analysis_results.md
 /tests
 /scratch
 /frontend_audit_screenshots
+/frontend_sprint2_screenshots
 
 # VS Code Extensions
 .qodo/
@@ -62,3 +63,11 @@ FINAL_FRONTEND_ARCHITECTURE.md
 FINAL_FRONTEND_IMPLEMENTATION_SPEC.md
 FRONTEND_PHASE1_IMPLEMENTATION_REPORT.md
 FRONTEND_BACKEND_CONTRACTS.md
+FRONTEND_SPRINT2_REPORT.md
+JUDGE_IMPACT_SPRINT_REPORT.md
+
+
+package-lock.json
+package.json
+
+capture_screenshots.js
