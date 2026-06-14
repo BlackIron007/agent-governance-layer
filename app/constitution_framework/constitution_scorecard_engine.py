@@ -28,7 +28,7 @@ class ConstitutionScorecardEngine:
         sec_violations = []
         sec_strengths = []
         
-        if "soc2" in action_text or "security" in action_text:
+        if "soc2" in action_text or "security" in action_text or (payload.raw_payload and payload.raw_payload.get("lacks_soc2") is True):
             sec_score -= 50.0
             sec_violations.append("Vendor lacks independent SOC2 compliance certificate.")
         if ciso_rejection:
@@ -62,7 +62,7 @@ class ConstitutionScorecardEngine:
         if len(violations) > 0:
             comp_score -= 30.0 * len(violations)
             comp_violations.extend(violations)
-        if "bypass" in action_text or "ignore" in action_text:
+        if "bypass" in action_text or "ignore" in action_text or (payload.raw_payload and payload.raw_payload.get("ignored_delivery_metrics") is True):
             comp_score -= 20.0
             comp_violations.append("Procedural compliance audit metrics ignored.")
 

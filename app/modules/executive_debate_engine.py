@@ -15,6 +15,7 @@ from app.board_agents.operations_agent import OperationsAgent
 from app.board_agents.procurement_agent import ProcurementAgent
 from app.services.model_client import ModelClient
 
+from app.schemas.memory_precedent import MemoryPrecedent
 from app.memory.precedent_retriever import PrecedentRetriever
 from app.memory.organizational_memory_engine import OrganizationalMemoryEngine
 from app.modules.executive_constitutional_layer import ExecutiveConstitutionalLayer
@@ -22,6 +23,7 @@ from app.enterprise_simulation.enterprise_simulation_engine import EnterpriseSim
 from app.adversarial_lab.attack_simulation_orchestrator import AttackSimulationOrchestrator
 from app.constitution_framework.constitution_engine import ConstitutionEngine
 from app.regulatory_intelligence.regulatory_orchestrator import RegulatoryOrchestrator
+
 
 
 
@@ -41,12 +43,14 @@ class ExecutiveDebateEngine:
         self.operations = OperationsAgent()
         self.procurement = ProcurementAgent()
 
-    def run_debate(self, payload: DecisionPayload, evidence_texts: List[str]) -> BoardDecisionReport:
+    def run_debate(self, payload: DecisionPayload, evidence_texts: List[str], precedents: List[MemoryPrecedent] = None) -> BoardDecisionReport:
         board_decision_id = f"brd_{uuid.uuid4().hex[:8]}"
         
         # 1. Retrieve Historical Precedents
-        retriever = PrecedentRetriever()
-        precedents = retriever.retrieve_relevant_precedents(payload.proposed_action)
+        if precedents is None:
+            retriever = PrecedentRetriever()
+            precedents = retriever.retrieve_relevant_precedents(payload.proposed_action)
+
         
         # 2. Gather Votes with Memory precedents passed
         votes: List[BoardMemberVote] = [
