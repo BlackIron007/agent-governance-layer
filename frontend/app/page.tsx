@@ -24,12 +24,20 @@ export default function LandingPage() {
           <p className="border border-outline-variant/15 bg-surface-container-low p-6 text-base sm:text-lg text-secondary leading-relaxed font-light shadow-sm mb-10">
             Trust Console IQ audits, challenges, simulates, and governs generative AI recommendations before they reach your customers, employees, vendors, regulators, or critical production databases.
           </p>
-          <Link
-            href="/command-center"
-            className="inline-block bg-primary text-on-primary px-10 py-4 text-sm tracking-widest uppercase font-light hover:bg-[#644f33] shadow-md transition-all"
-          >
-            Convene Decision Command Center &rarr;
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/command-center"
+              className="inline-block bg-primary text-on-primary px-8 py-4 text-xs tracking-widest uppercase font-medium hover:bg-[#644f33] shadow-md transition-all"
+            >
+              Convene Decision Command Center &rarr;
+            </Link>
+            <Link
+              href="/demo"
+              className="inline-block border border-[#715b3e] text-[#715b3e] px-8 py-4 text-xs tracking-widest uppercase font-medium hover:bg-[#715b3e]/10 shadow-md transition-all"
+            >
+              Explore Forensic Replay &rarr;
+            </Link>
+          </div>
         </div>
 
         <div className="w-full border-t border-outline-variant/10 my-4"></div>

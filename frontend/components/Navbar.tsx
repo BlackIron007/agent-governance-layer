@@ -11,6 +11,7 @@ export default function Navbar() {
     { label: "Home", path: "/" },
     { label: "Command Center", path: "/command-center" },
     { label: "Decision History", path: "/decision-history" },
+    { label: "Forensic Replay", path: "/demo" },
     { label: "Intelligence Hub", path: "/intelligence" },
   ];
 

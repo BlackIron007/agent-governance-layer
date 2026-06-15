@@ -392,10 +392,10 @@ export default function CommandCenterPage() {
 
           {/* Contextual Journey CTA */}
           <div className="border border-[#715b3e]/20 bg-[#fffbf2] p-6 text-center space-y-3 mt-8">
-            <h4 className="text-xs font-semibold text-[#715b3e] uppercase tracking-wider">Guided Journey: Step 2</h4>
-            <p className="text-xs text-[#6b5d4f] font-light">Audits are compiled continuously into the system archives.</p>
-            <Link href="/decision-history" className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#fff9ee] bg-[#715b3e] px-6 py-3 hover:bg-[#644f33] shadow-md transition-all">
-              View Enterprise Audit Trail &rarr;
+            <h4 className="text-xs font-semibold text-[#715b3e] uppercase tracking-wider">Decision archived successfully</h4>
+            <p className="text-xs text-[#6b5d4f] font-light">Investigate exactly why this verdict occurred</p>
+            <Link href="/demo" className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#fff9ee] bg-[#715b3e] px-6 py-3 hover:bg-[#644f33] shadow-md transition-all">
+              Open Forensic Replay &rarr;
             </Link>
           </div>
 

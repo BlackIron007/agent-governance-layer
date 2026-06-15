@@ -31,16 +31,16 @@ export default function DeltaImpactPanel({ metrics }: DeltaImpactPanelProps) {
         // GRC State Transition (What Changed?)
       </span>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5 pt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
         {items.map((item, idx) => (
-          <div key={idx} className="bg-[#fff9ee] p-2.5 border border-[#b9b29c]/20 rounded text-center space-y-1">
-            <span className="block text-[8.5px] font-mono text-stone-500 uppercase tracking-tight leading-tight min-h-[22px]">
+          <div key={idx} className="bg-[#fff9ee] p-3.5 border border-[#b9b29c]/20 rounded text-center space-y-1.5 flex flex-col justify-between min-h-[85px]">
+            <span className="block text-[9px] font-mono text-stone-500 uppercase tracking-wider leading-tight">
               {item.label}
             </span>
-            <div className="flex items-center justify-center gap-1.5 text-xs font-mono">
+            <div className="flex items-center justify-center gap-2 text-xs font-mono flex-wrap">
               <span className="text-stone-400 font-light">{item.from}</span>
               <span className="text-stone-300 font-light">&rarr;</span>
-              <span className={`font-bold ${item.isDanger ? "text-[#9e422c]" : "text-emerald-700"}`}>
+              <span className={`font-bold ${item.isDanger ? "text-[#9e422c]" : "text-emerald-700"} break-all`}>
                 {item.to}
               </span>
             </div>
