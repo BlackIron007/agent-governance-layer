@@ -2,6 +2,9 @@
 
 ## AI Governance For Decisions That Matter
 
+### Demo Video
+[Watch the full project walkthrough](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+
 Modern AI systems can recommend vendors, approve loans, screen candidates, allocate resources, trigger security actions, and influence critical business operations.
 
 Most organizations can explain **what** an AI decided.
@@ -39,6 +42,23 @@ Every decision is challenged before it is trusted.
 The result is not merely an AI output.
 
 It is an auditable governance verdict.
+
+---
+## Project Demonstration
+
+A complete walkthrough of Trust Console IQ is available below:
+
+[**Video Demo:**](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+
+The demo covers:
+
+- Decision Command Center
+- Executive Board Deliberation
+- Constitutional Analysis
+- Adversarial Governance Lab
+- Enterprise Simulation
+- Governance Intelligence Hub
+- Forensic Reconstruction Ledger
 
 ---
 
