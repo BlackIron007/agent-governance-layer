@@ -35,7 +35,7 @@ export default function CausalGraphPanel({
   return (
     <div className="space-y-6">
       {/* GRAPH CONTAINER */}
-      <div className="bg-[#fffbf2] border border-[#b9b29c]/25 p-5 rounded shadow-sm">
+      <div className="bg-[#fffbf2] border-2 border-[#b9b29c]/25 p-5 rounded-sm shadow-sm">
         <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-2 mb-4">
           // FORENSIC RECONSTRUCTION CAUSAL GRAPH (Directed Relationship Engine)
         </span>
@@ -64,29 +64,29 @@ export default function CausalGraphPanel({
                   <button
                     onClick={() => active && onSelectNode(node.id)}
                     disabled={!active}
-                    className={`w-full max-w-xl p-4 border rounded text-left transition-all duration-300 ${
+                    className={`w-full max-w-xl p-4 rounded-sm border-2 text-left transition-all duration-300 ${
                       !active 
-                        ? "opacity-15 bg-stone-50 border-stone-200 text-stone-400 cursor-not-allowed"
+                        ? "opacity-15 bg-stone-50 border-stone-200 text-stone-400 cursor-not-allowed shadow-none"
                         : isSelected
-                          ? "bg-[#fff6e0] border-[#715b3e] border-3 ring-4 ring-[#715b3e]/30 scale-[1.04] shadow-md text-[#373223] font-bold"
+                          ? "bg-[#fff6e0] border-[#715b3e] ring-2 ring-[#715b3e]/30 scale-[1.03] shadow-md text-[#373223] font-bold"
                           : isUpstream || isDownstream
-                            ? "bg-[#fffcf7] border-[#715b3e] border-2 ring-1 ring-[#715b3e]/20 text-[#373223] scale-[1.02] shadow-xs"
+                            ? "bg-[#fffcf7] border-[#715b3e] text-[#373223] scale-[1.01] shadow-sm"
                             : isDimmed
-                              ? "opacity-15 bg-stone-50 border-stone-200 text-stone-400 scale-[0.98]"
+                              ? "opacity-15 bg-stone-50 border-stone-200 text-stone-400 scale-[0.98] shadow-none"
                               : node.impactScore >= 45
-                                ? "bg-red-50 border-red-400 border-2 text-stone-800 hover:bg-red-100/60"
+                                ? "bg-red-50 border-red-400 text-stone-800 shadow-sm hover:bg-red-100/60"
                                 : node.impactScore >= 35
-                                  ? "bg-amber-50/60 border-amber-300 border text-stone-800 hover:bg-amber-100/60"
-                                  : "bg-emerald-50/40 border-emerald-300 border text-stone-800 hover:bg-emerald-100/60"
+                                  ? "bg-amber-50/60 border-amber-400 text-stone-800 shadow-sm hover:bg-amber-100/60"
+                                  : "bg-emerald-50/40 border-emerald-400 text-stone-800 shadow-sm hover:bg-emerald-100/60"
                     }`}
                   >
                     <div className="flex justify-between items-center text-[9px] font-mono font-bold uppercase tracking-wider">
                       <span className="text-[#817a67]">{node.type}</span>
                       {active && (
                         <div className="flex gap-2">
-                          <span className="text-emerald-700">Conf: {node.confidence}%</span>
+                          <span className="text-emerald-700 font-bold">Conf: {node.confidence}%</span>
                           <span className="text-stone-400">|</span>
-                          <span className="text-[#9e422c]">Impact: {node.impactScore}</span>
+                          <span className="text-[#9e422c] font-bold">Impact: {node.impactScore}</span>
                           <span className="text-stone-400">|</span>
                           <span className="text-[#715b3e] font-extrabold">Contrib: {node.verdictContributionPct}%</span>
                         </div>
@@ -105,7 +105,7 @@ export default function CausalGraphPanel({
                     );
 
                     return (
-                      <div className={`w-full max-w-xl flex flex-col items-center py-2 transition-all duration-300`}>
+                      <div className="w-full max-w-xl flex flex-col items-center py-2 transition-all duration-300">
                         <div className="flex items-center gap-1">
                           <ArrowDown className={`w-4 h-4 transition-all duration-300 ${
                             isEdgeParticipating 
@@ -115,12 +115,12 @@ export default function CausalGraphPanel({
                                 : "text-stone-200/40 stroke-[1px] opacity-10"
                           }`} />
                         </div>
-                        <div className={`text-[10px] font-mono max-w-md text-center bg-[#fffbf2] px-3 py-1.5 border rounded-sm mt-1 text-stone-500 shadow-2xs leading-tight transition-all duration-300 ${
+                        <div className={`text-[10px] font-mono max-w-md w-full text-center bg-[#fffbf2] px-3 py-1.5 border-2 rounded-sm mt-1 text-stone-500 shadow-2xs leading-tight transition-all duration-300 ${
                           isEdgeParticipating
-                            ? "border-[#715b3e] border-2 ring-2 ring-[#715b3e]/20 bg-[#fffaf0] opacity-100 scale-[1.01]"
+                            ? "border-[#715b3e] ring-2 ring-[#715b3e]/20 bg-[#fffaf0] opacity-100 scale-[1.01]"
                             : isNextActive
-                              ? "border-stone-200/80 opacity-20 scale-[0.98]"
-                              : "border-stone-200/20 opacity-10 scale-[0.98]"
+                              ? "border-stone-200 opacity-20 scale-[0.98]"
+                              : "border-stone-200/40 opacity-10 scale-[0.98]"
                         }`}>
                           <div className="font-bold text-stone-750">{edgeToNext.relationship}</div>
                           <div className="flex justify-center gap-2 mt-0.5 text-[8.5px] text-stone-450">
@@ -138,7 +138,7 @@ export default function CausalGraphPanel({
           </div>
 
           {/* Causal Analysis side panel */}
-          <div className="w-full lg:w-[320px] bg-[#fff9ee] border border-[#b9b29c]/25 p-4 rounded text-xs shrink-0 flex flex-col justify-between">
+          <div className="w-full lg:w-[320px] bg-[#fff9ee] border-2 border-[#b9b29c]/25 p-4 rounded-sm text-xs shrink-0 flex flex-col justify-between shadow-2xs">
             <div>
               <div className="flex items-center gap-2 border-b border-[#b9b29c]/25 pb-2 mb-3">
                 <Activity className="w-4 h-4 text-[#715b3e]" />

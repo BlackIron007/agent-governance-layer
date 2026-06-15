@@ -58,6 +58,16 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>("node-3");
   const [activeTab, setActiveTab] = useState<"causal" | "counterfactual" | "confidence" | "ownership" | "crossexam">("causal");
 
+  // Reveal trigger for progressive disclosure
+  const [isWorkspaceRevealed, setIsWorkspaceRevealed] = useState(false);
+
+  // Auto-reset reveal state when user manually navigates nodes (only when not auto-playing)
+  useEffect(() => {
+    if (!isPlaying) {
+      setIsWorkspaceRevealed(false);
+    }
+  }, [selectedNodeId, isPlaying]);
+
   const { nodes: causalGraphNodes, selectedNode: activeCausalNode, upstreamIds, downstreamIds } = useCausalGraph(selectedNodeId);
 
   const causalityNodes = [
@@ -184,6 +194,7 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
   useEffect(() => {
     if (isPlaying) {
       setSelectedNodeId(currentActiveNode.id);
+      setIsWorkspaceRevealed(true); // Always reveal during active playing/scrubbing
     }
   }, [currentActiveNode, isPlaying]);
 
@@ -277,8 +288,8 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
         {/* WORKSPACE */}
         <div className="flex-grow flex flex-col lg:flex-row overflow-hidden w-full">
           
-          {/* LEFT PANEL: EVIDENCE LEDGER */}
-          <aside className="w-full lg:w-[350px] border-r border-[#b9b29c]/25 bg-[#fffbf2] flex flex-col overflow-y-auto shrink-0 p-5 gap-5">
+          {/* LEFT PANEL: EVIDENCE LEDGER (Visual Order 1 on Desktop, Stacked 3rd on Mobile) */}
+          <aside className="w-full lg:w-[350px] border-r border-[#b9b29c]/25 bg-[#fffbf2] flex flex-col overflow-y-auto shrink-0 p-5 gap-5 lg:order-1 order-3">
             <div>
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-2 mb-3">
                 // GOVERNANCE EVIDENCE LEDGER
@@ -292,7 +303,7 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
                     <div 
                       key={art.id}
                       onClick={() => art.isDiscovered && setSelectedArtifactId(art.id)}
-                      className={`p-3 border rounded text-xs font-mono transition-all duration-300 flex items-center justify-between cursor-pointer ${
+                      className={`p-3 border rounded text-xs font-mono transition-all duration-350 flex items-center justify-between cursor-pointer ${
                         art.isDiscovered 
                           ? isSelected
                             ? "bg-[#fff9ee] border-[#715b3e] ring-1 ring-[#715b3e]"
@@ -347,8 +358,8 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
             )}
           </aside>
 
-          {/* CENTER PANEL */}
-          <main className="flex-grow overflow-y-auto p-6 flex flex-col gap-6">
+          {/* CENTER PANEL (Visual Order 2 on Desktop, Stacked 1st on Mobile) */}
+          <main className="flex-grow overflow-y-auto p-6 flex flex-col gap-6 lg:order-2 order-1">
             
             {/* 1. Interactive Causality Pathway Flowchart */}
             <CausalGraphPanel 
@@ -386,208 +397,227 @@ export default function GovernanceReplayModal({ onClose, isStandalone = false }:
               </div>
             </div>
 
-            {/* FORENSIC ANALYSIS WORKSPACE */}
-            <div className="bg-[#fffbf2] border border-[#b9b29c]/25 rounded p-5 space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-2 mb-3">
-                // FORENSIC ANALYSIS WORKSPACE
-              </span>
-
-              {/* Navigation Tabs */}
-              <div className="flex flex-wrap gap-2 border-b border-stone-200 pb-3 items-end">
-                {[
-                  { id: "causal", label: "Causal Analysis" },
-                  { id: "counterfactual", label: "Counterfactual Replay" },
-                  { id: "confidence", label: "Confidence Engine" },
-                  { id: "ownership", label: "Verdict Ownership" },
-                  { id: "crossexam", label: "Cross Examination" }
-                ].map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`px-4 transition-all duration-200 text-xs font-mono font-bold uppercase border flex items-center gap-1.5 ${
-                        isActive 
-                          ? "h-9 bg-[#fff6e0] text-[#715b3e] border-[#715b3e] border-2 shadow-2xs -mb-[1px] rounded-t-xs" 
-                          : "h-8 bg-[#fff9ee] text-[#715b3e]/70 border-[#b9b29c]/25 hover:bg-[#fffbf2] rounded-xs"
-                      }`}
-                    >
-                      {isActive && <span className="text-[#715b3e] font-extrabold">&bull;</span>}
-                      {tab.label}
-                    </button>
-                  );
-                })}
+            {/* PROGRESSIVE DISCLOSURE REVEAL WRAPPER */}
+            {!isWorkspaceRevealed ? (
+              <div className="bg-[#fffbf2] border-2 border-dashed border-[#715b3e]/40 p-8 rounded text-center space-y-4 shadow-sm animate-fadeIn">
+                <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block">
+                  // FOR FORENSIC INVESTIGATION
+                </span>
+                <h4 className="text-base font-light text-[#373223]">
+                  A compliance debate room transcript, Monte Carlo simulations, and counterfactual matrices were generated for this checkpoint.
+                </h4>
+                <button
+                  onClick={() => setIsWorkspaceRevealed(true)}
+                  className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#fff9ee] bg-[#715b3e] px-8 py-4 hover:bg-[#644f33] shadow-md transition-all font-bold"
+                >
+                  Reveal Forensic Investigation &rarr;
+                </button>
               </div>
+            ) : (
+              <div className="space-y-6 animate-slideUp">
+                {/* FORENSIC ANALYSIS WORKSPACE */}
+                <div className="bg-[#fffbf2] border border-[#b9b29c]/25 rounded p-5 space-y-4">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-2 mb-3">
+                    // FORENSIC ANALYSIS WORKSPACE
+                  </span>
 
-              {/* Workspace Content */}
-              <div className="space-y-4">
-                {activeTab === "causal" && activeCausalNode && (
-                  <div className="space-y-4 font-mono text-xs">
-                    <div className="bg-[#fff9ee] p-4 border border-[#b9b29c]/20 rounded">
-                      <div className="text-[9px] uppercase font-bold text-[#817a67] mb-1">Selected Node</div>
-                      <div className="text-sm font-bold text-stone-800">{activeCausalNode.name}</div>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 pt-3 border-t border-[#b9b29c]/15 text-[10.5px]">
-                        <div><span className="text-stone-400">TYPE:</span> {activeCausalNode.type}</div>
-                        <div><span className="text-stone-400">CONFIDENCE:</span> {activeCausalNode.confidence}%</div>
-                        <div><span className="text-stone-400">IMPACT SCORE:</span> {activeCausalNode.impactScore}</div>
-                        <div><span className="text-stone-400">VERDICT CONTRIB:</span> {activeCausalNode.verdictContributionPct}%</div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
-                        <span className="text-[9px] font-bold text-stone-500 uppercase block mb-1">Upstream Causes</span>
-                        {upstreamIds.length > 0 ? (
-                          <ul className="list-disc pl-4 space-y-1">
-                            {upstreamIds.map((id) => (
-                              <li key={id}>{causalGraphNodes.find(n => n.id === id)?.name || id}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div className="text-stone-400 italic">No upstream causes (Ingress Node)</div>
-                        )}
-                      </div>
-                      <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
-                        <span className="text-[9px] font-bold text-stone-500 uppercase block mb-1">Downstream Consequences</span>
-                        {downstreamIds.length > 0 ? (
-                          <ul className="list-disc pl-4 space-y-1">
-                            {downstreamIds.map((id) => (
-                              <li key={id}>{causalGraphNodes.find(n => n.id === id)?.name || id}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div className="text-stone-400 italic">No downstream consequences (Verdict Node)</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
-                      <span className="text-[9px] font-bold text-[#715b3e] uppercase block mb-2">Full Causal Chain</span>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {causalGraphNodes.map((n, idx) => (
-                          <React.Fragment key={n.id}>
-                            <span className={`px-2 py-1 border rounded-xs text-[10px] ${n.id === activeCausalNode.id ? "bg-[#715b3e] text-[#fff9ee] border-[#715b3e]" : "bg-[#fff9ee] text-[#715b3e] border-[#b9b29c]/25"}`}>
-                              {n.name}
-                            </span>
-                            {idx < causalGraphNodes.length - 1 && <span className="text-stone-300">&rarr;</span>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
+                  {/* Navigation Tabs */}
+                  <div className="flex flex-wrap gap-2 border-b border-stone-200 pb-3 items-end">
+                    {[
+                      { id: "causal", label: "Causal Analysis" },
+                      { id: "counterfactual", label: "Counterfactual Replay" },
+                      { id: "confidence", label: "Confidence Engine" },
+                      { id: "ownership", label: "Verdict Ownership" },
+                      { id: "crossexam", label: "Cross Examination" }
+                    ].map((tab) => {
+                      const isActive = activeTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id as any)}
+                          className={`px-4 transition-all duration-200 text-xs font-mono font-bold uppercase border flex items-center gap-1.5 ${
+                            isActive 
+                              ? "h-9 bg-[#fff6e0] text-[#715b3e] border-[#715b3e] border-2 shadow-2xs -mb-[1px] rounded-t-xs" 
+                              : "h-8 bg-[#fff9ee] text-[#715b3e]/70 border-[#b9b29c]/25 hover:bg-[#fffbf2] rounded-xs"
+                          }`}
+                        >
+                          {isActive && <span className="text-[#715b3e] font-extrabold">&bull;</span>}
+                          {tab.label}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
 
-                {activeTab === "counterfactual" && (
-                  <CounterfactualReplayPanel selectedNodeId={selectedNodeId} />
-                )}
-
-                {activeTab === "confidence" && (
+                  {/* Workspace Content */}
                   <div className="space-y-4">
-                    <ConfidenceChainPanel selectedNodeId={selectedNodeId} />
-                    <ConfidenceBreakdownCard selectedNodeId={selectedNodeId} />
-                  </div>
-                )}
-
-                {activeTab === "ownership" && (
-                  <VerdictOwnershipPanel />
-                )}
-
-                {activeTab === "crossexam" && (
-                  <CrossExaminationPanel data={crossExam} />
-                )}
-              </div>
-            </div>
-
-            {/* Standard Metrics & Timeline Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DeltaImpactPanel metrics={deltaMetrics} />
-              <ApprovalFixSetPanel fixes={minimalFixSet} outcome={counterfactualOutcome} />
-            </div>
-
-            {/* 8. Board Consensus Timeline */}
-            <section className="bg-[#fffbf2] border border-[#b9b29c]/25 p-5 rounded shadow-sm">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#stone-200] pb-2 mb-3">
-                // EXECUTIVE BOARD CONSENSUS TIMELINE (Sequential Deliberation)
-              </span>
-
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 pt-1">
-                {AGENT_VOTES.map((v) => {
-                  const isVoted = timeElapsed >= v.timeOffset;
-                  const isApprove = v.vote === "APPROVE";
-                  return (
-                    <div 
-                      key={v.agent}
-                      className={`p-3 border rounded flex flex-col justify-between h-[150px] transition-all duration-500 ${
-                        isVoted 
-                          ? isApprove 
-                            ? "bg-emerald-50/40 border-emerald-500/25 text-[#373223]" 
-                            : "bg-red-50/40 border-[#9e422c]/25 text-[#373223]"
-                          : "opacity-15 bg-[#fff9ee] border-stone-200 text-stone-400"
-                      }`}
-                    >
-                      <div>
-                        <div className="flex justify-between items-center border-b border-[#b9b29c]/15 pb-1">
-                           <span className="text-xs font-bold font-mono tracking-wider">{v.agent}</span>
-                           {isVoted && (
-                             <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 border rounded ${
-                               isApprove ? "text-emerald-700 bg-emerald-100 border-emerald-500/25" : "text-[#9e422c] bg-red-100 border-[#9e422c]/25"
-                             }`}>{v.vote}</span>
-                           )}
+                    {activeTab === "causal" && activeCausalNode && (
+                      <div className="space-y-4 font-mono text-xs">
+                        <div className="bg-[#fff9ee] p-4 border border-[#b9b29c]/20 rounded">
+                          <div className="text-[9px] uppercase font-bold text-[#817a67] mb-1">Selected Node</div>
+                          <div className="text-sm font-bold text-stone-800">{activeCausalNode.name}</div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 pt-3 border-t border-[#b9b29c]/15 text-[10.5px]">
+                            <div><span className="text-stone-400">TYPE:</span> {activeCausalNode.type}</div>
+                            <div><span className="text-stone-400">CONFIDENCE:</span> {activeCausalNode.confidence}%</div>
+                            <div><span className="text-stone-400">IMPACT SCORE:</span> {activeCausalNode.impactScore}</div>
+                            <div><span className="text-stone-400">VERDICT CONTRIB:</span> {activeCausalNode.verdictContributionPct}%</div>
+                          </div>
                         </div>
 
-                        {isVoted ? (
-                          <div className="mt-2 text-[10px] text-stone-600 leading-snug">
-                            <div className="text-[9px] font-mono text-[#715b3e] font-bold uppercase">What Changed:</div>
-                            {v.agent === "CFO" && <div>Risk: 32 &rarr; 45 | Odds: 95%</div>}
-                            {v.agent === "CISO" && <div className="text-[#9e422c]">Risk: 45 &rarr; 72 | Odds: 68% &rarr; 42%</div>}
-                            {v.agent === "Legal" && <div className="text-[#9e422c]">Risk: 72 &rarr; 81 | Consensus Vetoed</div>}
-                            {v.agent === "Operations" && <div>Latency Drop: -24% Confirmed</div>}
-                            {v.agent === "Procurement" && <div className="text-[#9e422c]">Weight shifted to block</div>}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
+                            <span className="text-[9px] font-bold text-stone-500 uppercase block mb-1">Upstream Causes</span>
+                            {upstreamIds.length > 0 ? (
+                              <ul className="list-disc pl-4 space-y-1">
+                                {upstreamIds.map((id) => (
+                                  <li key={id}>{causalGraphNodes.find(n => n.id === id)?.name || id}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <div className="text-stone-400 italic">No upstream causes (Ingress Node)</div>
+                            )}
                           </div>
-                        ) : (
-                          <div className="space-y-1.5 mt-3">
-                            <div className="h-3 w-full bg-stone-200 animate-pulse rounded" />
-                            <div className="h-3 w-4/5 bg-stone-200 animate-pulse rounded" />
+                          <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
+                            <span className="text-[9px] font-bold text-stone-500 uppercase block mb-1">Downstream Consequences</span>
+                            {downstreamIds.length > 0 ? (
+                              <ul className="list-disc pl-4 space-y-1">
+                                {downstreamIds.map((id) => (
+                                  <li key={id}>{causalGraphNodes.find(n => n.id === id)?.name || id}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <div className="text-stone-400 italic">No downstream consequences (Verdict Node)</div>
+                            )}
                           </div>
-                        )}
+                        </div>
+
+                        <div className="p-4 border border-[#b9b29c]/20 rounded bg-[#fff9ee]">
+                          <span className="text-[9px] font-bold text-[#715b3e] uppercase block mb-2">Full Causal Chain</span>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {causalGraphNodes.map((n, idx) => (
+                              <React.Fragment key={n.id}>
+                                <span className={`px-2 py-1 border rounded-xs text-[10px] ${n.id === activeCausalNode.id ? "bg-[#715b3e] text-[#fff9ee] border-[#715b3e]" : "bg-[#fff9ee] text-[#715b3e] border-[#b9b29c]/25"}`}>
+                                  {n.name}
+                                </span>
+                                {idx < causalGraphNodes.length - 1 && <span className="text-stone-300">&rarr;</span>}
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        </div>
                       </div>
+                    )}
 
-                      {isVoted && (
-                        <div className="text-[8px] font-mono text-stone-400 border-t border-[#b9b29c]/15 pt-1.5 flex justify-between">
-                          <span>T+{v.timeOffset}s</span>
-                          <span>{v.consensusAfter}</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+                    {activeTab === "counterfactual" && (
+                      <CounterfactualReplayPanel selectedNodeId={selectedNodeId} />
+                    )}
 
-            {/* 9. Rejection Drivers Summary */}
-            <section className="bg-[#fffbf2] border border-[#b9b29c]/25 p-5 rounded shadow-sm">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-stone-200 pb-2 mb-3">
-                // REJECTION DRIVERS SUMMARY
-              </span>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {rejectionDrivers.map((driver, idx) => (
-                  <div key={idx} className="bg-[#fff9ee] p-3 border border-[#b9b29c]/20 rounded space-y-1 font-mono text-xs">
-                    <span className="text-stone-400 block text-[9px]">DRIVER 0{idx + 1}</span>
-                    <strong className="text-stone-800 block truncate">{driver.name}</strong>
-                    <div className="flex justify-between items-center text-[10px] pt-1 border-t border-stone-200/50 mt-1">
-                      <span className="text-stone-500">Weight: {driver.weight}%</span>
-                      <span className="text-[#9e422c] font-bold">{driver.status}</span>
-                    </div>
+                    {activeTab === "confidence" && (
+                      <div className="space-y-4">
+                        <ConfidenceChainPanel selectedNodeId={selectedNodeId} />
+                        <ConfidenceBreakdownCard selectedNodeId={selectedNodeId} />
+                      </div>
+                    )}
+
+                    {activeTab === "ownership" && (
+                      <VerdictOwnershipPanel />
+                    )}
+
+                    {activeTab === "crossexam" && (
+                      <CrossExaminationPanel data={crossExam} />
+                    )}
                   </div>
-                ))}
-              </div>
-            </section>
+                </div>
 
+                {/* Standard Metrics & Timeline Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <DeltaImpactPanel metrics={deltaMetrics} />
+                  <ApprovalFixSetPanel fixes={minimalFixSet} outcome={counterfactualOutcome} />
+                </div>
+
+                {/* 8. Board Consensus Timeline */}
+                <section className="bg-[#fffbf2] border border-[#b9b29c]/25 p-5 rounded shadow-sm">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#stone-200] pb-2 mb-3">
+                    // EXECUTIVE BOARD CONSENSUS TIMELINE (Sequential Deliberation)
+                  </span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 pt-1">
+                    {AGENT_VOTES.map((v) => {
+                      const isVoted = timeElapsed >= v.timeOffset;
+                      const isApprove = v.vote === "APPROVE";
+                      return (
+                        <div 
+                          key={v.agent}
+                          className={`p-3 border rounded flex flex-col justify-between h-[150px] transition-all duration-500 ${
+                            isVoted 
+                              ? isApprove 
+                                ? "bg-emerald-50/40 border-emerald-500/25 text-[#373223]" 
+                                : "bg-red-50/40 border-[#9e422c]/25 text-[#373223]"
+                              : "opacity-15 bg-[#fff9ee] border-stone-200 text-stone-400"
+                          }`}
+                        >
+                          <div>
+                            <div className="flex justify-between items-center border-b border-[#b9b29c]/15 pb-1">
+                               <span className="text-xs font-bold font-mono tracking-wider">{v.agent}</span>
+                               {isVoted && (
+                                 <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 border rounded ${
+                                   isApprove ? "text-emerald-700 bg-emerald-100 border-emerald-500/25" : "text-[#9e422c] bg-red-100 border-[#9e422c]/25"
+                                 }`}>{v.vote}</span>
+                               )}
+                            </div>
+
+                            {isVoted ? (
+                              <div className="mt-2 text-[10px] text-stone-600 leading-snug">
+                                <div className="text-[9px] font-mono text-[#715b3e] font-bold uppercase">What Changed:</div>
+                                {v.agent === "CFO" && <div>Risk: 32 &rarr; 45 | Odds: 95%</div>}
+                                {v.agent === "CISO" && <div className="text-[#9e422c]">Risk: 45 &rarr; 72 | Odds: 68% &rarr; 42%</div>}
+                                {v.agent === "Legal" && <div className="text-[#9e422c]">Risk: 72 &rarr; 81 | Consensus Vetoed</div>}
+                                {v.agent === "Operations" && <div>Latency Drop: -24% Confirmed</div>}
+                                {v.agent === "Procurement" && <div className="text-[#9e422c]">Weight shifted to block</div>}
+                              </div>
+                            ) : (
+                              <div className="space-y-1.5 mt-3">
+                                <div className="h-3 w-full bg-stone-200 animate-pulse rounded" />
+                                <div className="h-3 w-4/5 bg-stone-200 animate-pulse rounded" />
+                              </div>
+                            )}
+                          </div>
+
+                          {isVoted && (
+                            <div className="text-[8px] font-mono text-stone-400 border-t border-[#b9b29c]/15 pt-1.5 flex justify-between">
+                              <span>T+{v.timeOffset}s</span>
+                              <span>{v.consensusAfter}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {/* 9. Rejection Drivers Summary */}
+                <section className="bg-[#fffbf2] border border-[#b9b29c]/25 p-5 rounded shadow-sm">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-stone-200 pb-2 mb-3">
+                    // REJECTION DRIVERS SUMMARY
+                  </span>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {rejectionDrivers.map((driver, idx) => (
+                      <div key={idx} className="bg-[#fff9ee] p-3 border border-[#b9b29c]/20 rounded space-y-1 font-mono text-xs">
+                        <span className="text-stone-400 block text-[9px]">DRIVER 0{idx + 1}</span>
+                        <strong className="text-stone-800 block truncate">{driver.name}</strong>
+                        <div className="flex justify-between items-center text-[10px] pt-1 border-t border-stone-200/50 mt-1">
+                          <span className="text-stone-500">Weight: {driver.weight}%</span>
+                          <span className="text-[#9e422c] font-bold">{driver.status}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
           </main>
 
-          {/* RIGHT PANEL: WHY THIS MATTERS */}
-          <aside className="w-full lg:w-[350px] border-l border-[#b9b29c]/25 bg-[#fffbf2] flex flex-col justify-between overflow-y-auto shrink-0 p-5">
+          {/* RIGHT PANEL: WHY THIS MATTERS (Visual Order 3 on Desktop, Stacked 2nd on Mobile) */}
+          <aside className="w-full lg:w-[350px] border-l border-[#b9b29c]/25 bg-[#fffbf2] flex flex-col justify-between overflow-y-auto shrink-0 p-5 lg:order-3 order-2">
             <div className="space-y-4">
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/15 pb-2 mb-3">
                 // WHY THIS MATTERS

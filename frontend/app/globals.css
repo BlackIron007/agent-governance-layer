@@ -7,6 +7,7 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 17.5px; /* Increase all rem-based typography by ~10% */
   }
 
   body {

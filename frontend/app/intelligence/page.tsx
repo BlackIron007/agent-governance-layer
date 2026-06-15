@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { SkeletonIntelligencePage } from "../../components/SkeletonLoader";
 import { fetchGovernanceIntelligence } from "../../lib/api";
@@ -146,11 +147,71 @@ function FrictionDot({ level }: { level: string }) {
   return <span className={`w-2 h-2 rounded-full ${colors[level as keyof typeof colors] ?? "bg-[#817a67]"} shrink-0 mt-1`} />;
 }
 
+interface AccordionCardProps {
+  title: string;
+  readTime: string;
+  takeaway: string;
+  emptyState: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+function AccordionCard({
+  title,
+  readTime,
+  takeaway,
+  emptyState,
+  isOpen,
+  onToggle,
+  children
+}: AccordionCardProps) {
+  return (
+    <div className="border border-outline-variant/15 bg-surface shadow-sm w-full transition-all duration-300">
+      <button
+        onClick={onToggle}
+        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[#715b3e]/5 transition-colors border-b border-[#b9b29c]/10"
+      >
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-850">{title}</h3>
+            <span className="text-[9px] font-mono text-[#817a67] uppercase bg-[#fffbf2] border border-[#b9b29c]/30 px-1.5 py-0.5 rounded-sm">
+              {readTime}
+            </span>
+          </div>
+          <p className="text-[11px] text-[#6b5d4f] font-light italic">{takeaway}</p>
+        </div>
+        <span className="text-[#715b3e] text-lg font-bold">
+          {isOpen ? "−" : "+"}
+        </span>
+      </button>
+      
+      {isOpen ? (
+        <div className="p-5 bg-surface transition-all duration-300">
+          {children}
+        </div>
+      ) : (
+        <div className="px-5 py-3 bg-[#fffbf2] text-[10px] text-stone-400 italic font-mono flex items-center gap-2">
+          <span>&bull;</span>
+          <span>{emptyState}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function IntelligencePage() {
   const [data, setData] = useState<IntelligenceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+
+  // Accordion open states
+  const [isDriftOpen, setIsDriftOpen] = useState(false);
+  const [isAgentsOpen, setIsAgentsOpen] = useState(false);
+  const [isViolationsOpen, setIsViolationsOpen] = useState(false);
+  const [isFrictionOpen, setIsFrictionOpen] = useState(false);
+  const [isEvolutionOpen, setIsEvolutionOpen] = useState(false);
 
   const loadData = () => {
     setLoading(true);
@@ -256,7 +317,7 @@ export default function IntelligencePage() {
             </div>
             <div className="flex justify-between hover:bg-stone-50 p-1.5 transition-colors">
               <span className="text-emerald-700">12:02</span>
-              <span className="flex-1 px-4 text-[#373223]">Collusion risk dropped below threshold</span>
+              <span className="flex-1 px-4 text-[#373223]">Time-locked session access expired</span>
               <span className="text-emerald-700">PASS</span>
             </div>
             <div className="flex justify-between hover:bg-stone-50 p-1.5 transition-colors">
@@ -267,7 +328,7 @@ export default function IntelligencePage() {
           </div>
         </section>
 
-        {/* ── Most Important Governance Finding Today (Minor Correction 3) ── */}
+        {/* ── Most Important Governance Finding Today ── */}
         <section className="w-full bg-[#f5eddd] border border-[#9e422c]/30 p-5 mb-6 shadow-sm animate-fadeIn">
           <span className="text-[9px] font-mono uppercase tracking-widest text-[#9e422c] font-bold block border-b border-[#9e422c]/15 pb-1 mb-2">
             // Most Important Governance Finding Today
@@ -281,7 +342,7 @@ export default function IntelligencePage() {
         {loading ? (
           <SkeletonIntelligencePage />
         ) : (
-          <div className="w-full space-y-8 animate-fadeIn">
+          <div className="w-full space-y-6 animate-fadeIn">
 
             {/* ── 1. GOVERNANCE HEALTH INDEX ── */}
             <section className="w-full border border-outline-variant/15 p-6 md:p-8 bg-surface-container-low/40 flex flex-col lg:flex-row items-start lg:items-center gap-8 shadow-sm">
@@ -302,11 +363,11 @@ export default function IntelligencePage() {
                       </div>
                       <div className="w-full bg-[#f5eddd] h-1.5 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-700"
-                          style={{
-                            width: `${item.score}%`,
-                            background: item.score >= 85 ? "#3a684d" : item.score >= 65 ? "#715b3e" : "#9e422c",
-                          }}
+                           className="h-full rounded-full transition-all duration-700"
+                           style={{
+                             width: `${item.score}%`,
+                             background: item.score >= 85 ? "#3a684d" : item.score >= 65 ? "#715b3e" : "#9e422c",
+                           }}
                         />
                       </div>
                       {item.description && (
@@ -318,215 +379,256 @@ export default function IntelligencePage() {
               </div>
             </section>
 
-            {/* ── 2-col grid ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {/* ── DEEPER ANALYSIS SECTIONS (PROGRESSIVE COLLAPSE) ── */}
+            <div className="space-y-4 w-full">
 
               {/* 2. CONSTITUTIONAL DRIFT */}
-              <div className="border border-outline-variant/15 p-6 bg-surface space-y-4 shadow-sm">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
-                  <h3 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-[#715b3e]" />
-                    Constitutional Drift Analysis
-                  </h3>
-                  <span className={`text-[9px] font-mono uppercase font-semibold px-2 py-0.5 border ${
-                    d.drift_analysis?.trend === "Stable"
-                      ? "text-[#3a684d] bg-emerald-500/5 border-emerald-500/10"
-                      : "text-amber-700 bg-amber-500/5 border-amber-500/10"
-                  }`}>
-                    {d.drift_analysis?.trend ?? "Stable"}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#fff9ee] border border-[#b9b29c]/10 p-3 text-center">
-                    <span className="text-2xl font-light text-[#3a684d] font-mono">{d.drift_analysis?.alignment_stability_30d ?? "97.9%"}</span>
-                    <span className="block text-[9px] uppercase text-[#817a67] mt-1 font-light">Alignment Stability (30d)</span>
+              <AccordionCard
+                title="Constitutional Drift Analysis"
+                readTime="15s scan"
+                takeaway="Measures alignment stabilities and divergence metrics across governance frameworks."
+                emptyState="Drift analysis calculations active. Click to review stabilities."
+                isOpen={isDriftOpen}
+                onToggle={() => setIsDriftOpen(!isDriftOpen)}
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
+                    <h4 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-[#715b3e]" />
+                      Constitutional Drift Analytics
+                    </h4>
+                    <span className="text-[9px] font-mono uppercase font-semibold px-2 py-0.5 border text-[#3a684d] bg-emerald-500/5 border-emerald-500/10">
+                      Stable Trend
+                    </span>
                   </div>
-                  <div className="bg-[#fff9ee] border border-[#b9b29c]/10 p-3 text-center">
-                    <span className="text-2xl font-light text-[#715b3e] font-mono">{d.drift_analysis?.drift_score ?? 2.1}</span>
-                    <span className="block text-[9px] uppercase text-[#817a67] mt-1 font-light">Drift Score</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="bg-[#fff9ee] border border-[#b9b29c]/10 p-3 text-center">
+                      <span className="text-2xl font-light text-[#3a684d] font-mono">{d.drift_analysis?.alignment_stability_30d ?? "97.9%"}</span>
+                      <span className="block text-[9px] uppercase text-[#817a67] mt-1 font-light">Alignment Stability (30d)</span>
+                    </div>
+                    <div className="bg-[#fff9ee] border border-[#b9b29c]/10 p-3 text-center">
+                      <span className="text-2xl font-light text-[#715b3e] font-mono">{d.drift_analysis?.drift_score ?? 2.1}</span>
+                      <span className="block text-[9px] uppercase text-[#817a67] mt-1 font-light">Drift Score</span>
+                    </div>
                   </div>
+                  <p className="text-xs font-light text-[#6b5d4f] leading-relaxed">
+                    Decision patterns show strong constitutional alignment. Drift remains within ±3% of baseline across all active constitutional frameworks.
+                  </p>
                 </div>
-                <p className="text-xs font-light text-[#6b5d4f] leading-relaxed">
-                  Decision patterns show strong constitutional alignment. Drift remains within ±3% of baseline across all active constitutional frameworks.
-                </p>
-              </div>
+              </AccordionCard>
 
               {/* 3. RISKIEST AGENTS */}
-              <div className="border border-outline-variant/15 p-6 bg-surface space-y-4 shadow-sm">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
-                  <h3 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-[#9e422c]" />
-                    Riskiest Agents Leaderboard
-                  </h3>
-                  <span className="text-[9px] font-mono uppercase text-[#9e422c] font-semibold bg-red-500/5 px-2 py-0.5 border border-red-500/10">
-                    Audit Pending
-                  </span>
-                </div>
-                <div className="divide-y divide-[#b9b29c]/10 text-xs">
-                  {d.risk_rankings.map((agent, idx) => (
-                    <div key={idx} className="py-3 flex justify-between items-center gap-2">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <span className="text-[10px] font-mono text-[#817a67] shrink-0">#{idx + 1}</span>
-                        <div className="min-w-0">
-                          <p className="font-mono text-[#715b3e] font-medium truncate">{agent.id}</p>
-                          <p className="text-[10px] text-[#6b5d4f] font-light">{agent.violations} violations</p>
+              <AccordionCard
+                title="Riskiest Agents Leaderboard"
+                readTime="15s scan"
+                takeaway="Monitors background agent run loops for regulatory and constitutional compliance violations."
+                emptyState="Violations tracking operational. Click to expand risk leaderboard."
+                isOpen={isAgentsOpen}
+                onToggle={() => setIsAgentsOpen(!isAgentsOpen)}
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
+                    <h4 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-[#9e422c]" />
+                      Riskiest Active Agent Nodes
+                    </h4>
+                    <span className="text-[9px] font-mono uppercase text-[#9e422c] font-semibold bg-red-500/5 px-2 py-0.5 border border-red-500/10">
+                      Audit Pending
+                    </span>
+                  </div>
+                  <div className="divide-y divide-[#b9b29c]/10 text-xs">
+                    {d.risk_rankings.map((agent, idx) => (
+                      <div key={idx} className="py-3 flex justify-between items-center gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-[10px] font-mono text-[#817a67] shrink-0">#{idx + 1}</span>
+                          <div className="min-w-0">
+                            <p className="font-mono text-[#715b3e] font-medium truncate">{agent.id}</p>
+                            <p className="text-[10px] text-[#6b5d4f] font-light">{agent.violations} violations</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <TrendIcon trend={agent.trend} />
+                          <div className="text-right">
+                            <span className="text-[10px] font-mono font-medium block">{agent.score.toFixed(2)}</span>
+                            <span className={`text-[8px] uppercase font-mono px-1.5 py-0.5 border ${
+                              agent.risk_level === "Critical"
+                                ? "text-[#9e422c] bg-[#9e422c]/5 border-[#9e422c]/20"
+                                : agent.risk_level === "High"
+                                ? "text-amber-700 bg-amber-500/5 border-amber-500/20"
+                                : "text-[#817a67] bg-[#b9b29c]/5 border-[#b9b29c]/20"
+                            }`}>
+                              {agent.risk_level}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <TrendIcon trend={agent.trend} />
-                        <div className="text-right">
-                          <span className="text-[10px] font-mono font-medium block">{agent.score.toFixed(2)}</span>
-                          <span className={`text-[8px] uppercase font-mono px-1.5 py-0.5 border ${
-                            agent.risk_level === "Critical"
+                    ))}
+                  </div>
+                </div>
+              </AccordionCard>
+
+              {/* 4. TOP CONSTITUTIONAL VIOLATIONS */}
+              <AccordionCard
+                title="Top Constitutional Violations"
+                readTime="20s read"
+                takeaway="Summarizes policy override and framework variance events across historical datasets."
+                emptyState="Violations matrix calculated. Click to expand failure categories."
+                isOpen={isViolationsOpen}
+                onToggle={() => setIsViolationsOpen(!isViolationsOpen)}
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
+                    <h4 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-[#715b3e]" />
+                      Violated Constitution Rule Categories
+                    </h4>
+                    {d.constitutional_analytics?.total_violations && (
+                      <span className="text-[9px] font-mono text-[#9e422c]">
+                        {d.constitutional_analytics.total_violations} total failures
+                      </span>
+                    )}
+                  </div>
+                  <div className="divide-y divide-[#b9b29c]/10 text-xs">
+                    {topViolations.map((v, idx) => (
+                      <div key={idx} className="py-3 flex justify-between items-center gap-4">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <span className={`text-[8px] uppercase font-mono font-bold px-1.5 py-0.5 border shrink-0 ${
+                            v.severity === "CRITICAL"
                               ? "text-[#9e422c] bg-[#9e422c]/5 border-[#9e422c]/20"
-                              : agent.risk_level === "High"
+                              : v.severity === "HIGH"
                               ? "text-amber-700 bg-amber-500/5 border-amber-500/20"
                               : "text-[#817a67] bg-[#b9b29c]/5 border-[#b9b29c]/20"
                           }`}>
-                            {agent.risk_level}
+                            {v.severity}
+                          </span>
+                          <p className="font-semibold text-stone-700 font-mono truncate">{v.rule}</p>
+                        </div>
+                        <div className="text-right shrink-0 flex items-center gap-3">
+                          <div className="flex items-center gap-1 text-[10px] text-[#6b5d4f]">
+                            {v.trend === "Increasing" ? (
+                              <TrendingUp className="w-3 h-3 text-[#9e422c]" />
+                            ) : v.trend === "Decreasing" ? (
+                              <TrendingDown className="w-3 h-3 text-[#3a684d]" />
+                            ) : (
+                              <Minus className="w-3 h-3 text-[#817a67]" />
+                            )}
+                            <span>{v.trend}</span>
+                          </div>
+                          <span className="text-[11px] font-bold text-[#373223] font-mono">{v.count} failures</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </AccordionCard>
+
+              {/* 5. POLICY FRICTION */}
+              <AccordionCard
+                title="Constitutional Policy Friction Index"
+                readTime="20s read"
+                takeaway="Identifies policy rules that cause administrative overrides or pipeline warnings."
+                emptyState="Frictions analysis ready. Click to open override indices."
+                isOpen={isFrictionOpen}
+                onToggle={() => setIsFrictionOpen(!isFrictionOpen)}
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
+                    <h4 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
+                      <RefreshCw className="w-4 h-4 text-[#715b3e]" />
+                      Active Friction Points Summary
+                    </h4>
+                  </div>
+                  <div className="divide-y divide-[#b9b29c]/10 text-xs">
+                    {d.policy_frictions.map((item, idx) => (
+                      <div key={idx} className="py-3 flex justify-between items-start gap-4">
+                        <div className="flex items-start gap-2 flex-1">
+                          <FrictionDot level={item.friction} />
+                          <p className="font-light text-[#373223] leading-relaxed">{item.rule}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className={`text-[10px] uppercase font-semibold block ${
+                            item.friction === "High" ? "text-[#9e422c]" : "text-amber-700"
+                          }`}>
+                            {item.friction} Friction
+                          </span>
+                          <span className="text-[9px] text-[#817a67] font-light block mt-0.5">
+                            {item.overrides} overrides
                           </span>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* 4. TOP CONSTITUTIONAL VIOLATIONS */}
-              <div className="border border-outline-variant/15 p-6 bg-surface space-y-4 shadow-sm col-span-1 md:col-span-2">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
-                  <h3 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#715b3e]" />
-                    Top Constitutional Violations
-                  </h3>
-                  {d.constitutional_analytics?.total_violations && (
-                    <span className="text-[9px] font-mono text-[#9e422c]">
-                      {d.constitutional_analytics.total_violations} total failures
-                    </span>
-                  )}
-                </div>
-                <div className="divide-y divide-[#b9b29c]/10 text-xs">
-                  {topViolations.map((v, idx) => (
-                    <div key={idx} className="py-3 flex justify-between items-center gap-4">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <span className={`text-[8px] uppercase font-mono font-bold px-1.5 py-0.5 border shrink-0 ${
-                          v.severity === "CRITICAL"
-                            ? "text-[#9e422c] bg-[#9e422c]/5 border-[#9e422c]/20"
-                            : v.severity === "HIGH"
-                            ? "text-amber-700 bg-amber-500/5 border-amber-500/20"
-                            : "text-[#817a67] bg-[#b9b29c]/5 border-[#b9b29c]/20"
-                        }`}>
-                          {v.severity}
-                        </span>
-                        <p className="font-semibold text-stone-700 font-mono truncate">{v.rule}</p>
-                      </div>
-                      <div className="text-right shrink-0 flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-[10px] text-[#6b5d4f]">
-                          {v.trend === "Increasing" ? (
-                            <TrendingUp className="w-3 h-3 text-[#9e422c]" />
-                          ) : v.trend === "Decreasing" ? (
-                            <TrendingDown className="w-3 h-3 text-[#3a684d]" />
-                          ) : (
-                            <Minus className="w-3 h-3 text-[#817a67]" />
-                          )}
-                          <span>{v.trend}</span>
-                        </div>
-                        <span className="text-[11px] font-bold text-[#373223] font-mono">{v.count} failures</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 5. POLICY FRICTION */}
-              <div className="border border-outline-variant/15 p-6 bg-surface space-y-4 shadow-sm col-span-1 md:col-span-2">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
-                  <h3 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 text-[#715b3e]" />
-                    Constitutional Policy Friction Index
-                  </h3>
-                  <span className="text-[9px] font-mono uppercase text-[#6b5d4f]">Ledger analysis</span>
-                </div>
-                <div className="divide-y divide-[#b9b29c]/10 text-xs">
-                  {d.policy_frictions.map((item, idx) => (
-                    <div key={idx} className="py-3 flex justify-between items-start gap-4">
-                      <div className="flex items-start gap-2 flex-1">
-                        <FrictionDot level={item.friction} />
-                        <p className="font-light text-[#373223] leading-relaxed">{item.rule}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className={`text-[10px] uppercase font-semibold block ${
-                          item.friction === "High" ? "text-[#9e422c]" : "text-amber-700"
-                        }`}>
-                          {item.friction} Friction
-                        </span>
-                        <span className="text-[9px] text-[#817a67] font-light block mt-0.5">
-                          {item.overrides} overrides
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </AccordionCard>
 
               {/* 6. POLICY EVOLUTION RECOMMENDATIONS */}
-              <div className="border border-outline-variant/15 p-6 bg-surface space-y-4 shadow-sm col-span-1 md:col-span-2">
-                <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
-                  <h3 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#715b3e]" />
-                    Policy Evolution Recommendations
-                    <span className="text-[9px] font-light normal-case text-[#817a67]">(Constitutional Evolution Engine)</span>
-                  </h3>
-                  <span className="text-[9px] font-mono uppercase text-[#3a684d] font-semibold bg-emerald-500/5 px-2 py-0.5 border border-emerald-500/10">
-                    {(d.policy_evolution_recommendations ?? []).length} Active
-                  </span>
-                </div>
-                <div className="divide-y divide-[#b9b29c]/10 space-y-4">
-                  {(d.policy_evolution_recommendations ?? []).map((evo, i) => (
-                    <div key={evo.id ?? i} className="pt-3 flex flex-col md:flex-row justify-between items-start gap-4">
-                      <div className="space-y-2 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {evo.action && (
-                            <span className="font-mono text-[10px] font-bold text-[#715b3e] bg-[#715b3e]/8 border border-[#715b3e]/20 px-2 py-0.5">
-                              {evo.action}
-                            </span>
-                          )}
-                          {evo.target && (
-                            <span className="text-[10px] uppercase text-stone-500 font-mono">
-                              → {evo.target}
-                            </span>
-                          )}
-                          {evo.id && (
-                            <span className="text-[9px] text-[#817a67] font-mono">{evo.id}</span>
+              <AccordionCard
+                title="Policy Evolution Recommendations"
+                readTime="30s read"
+                takeaway="Proposes automated upgrades to rulesets to minimize friction and prevent drift."
+                emptyState="Recommendations indexed. Click to review modernization proposals."
+                isOpen={isEvolutionOpen}
+                onToggle={() => setIsEvolutionOpen(!isEvolutionOpen)}
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-2 border-b border-[#b9b29c]/10">
+                    <h4 className="text-xs uppercase tracking-widest text-[#817a67] font-medium flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#715b3e]" />
+                      Evolution Recommendations Feed
+                    </h4>
+                  </div>
+                  <div className="divide-y divide-[#b9b29c]/10 space-y-4">
+                    {(d.policy_evolution_recommendations ?? []).map((evo, i) => (
+                      <div key={evo.id ?? i} className="pt-3 flex flex-col md:flex-row justify-between items-start gap-4">
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {evo.action && (
+                              <span className="font-mono text-[10px] font-bold text-[#715b3e] bg-[#715b3e]/8 border border-[#715b3e]/20 px-2 py-0.5">
+                                {evo.action}
+                              </span>
+                            )}
+                            {evo.target && (
+                              <span className="text-[10px] uppercase text-stone-500 font-mono">
+                                → {evo.target}
+                              </span>
+                            )}
+                            {evo.id && (
+                              <span className="text-[9px] text-[#817a67] font-mono">{evo.id}</span>
+                            )}
+                          </div>
+                          <p className="text-xs font-light text-[#373223] leading-relaxed">
+                            {evo.change ?? evo.recommendation ?? ""}
+                          </p>
+                          {(evo.impact ?? evo.rationale) && (
+                            <div className="flex items-center gap-1.5">
+                              <ChevronRight className="w-3 h-3 text-[#3a684d]" />
+                              <p className="text-[10px] text-[#3a684d] font-mono font-medium">
+                                {evo.impact ?? evo.rationale}
+                              </p>
+                            </div>
                           )}
                         </div>
-                        <p className="text-xs font-light text-[#373223] leading-relaxed">
-                          {evo.change ?? evo.recommendation ?? ""}
-                        </p>
-                        {(evo.impact ?? evo.rationale) && (
-                          <div className="flex items-center gap-1.5">
-                            <ChevronRight className="w-3 h-3 text-[#3a684d]" />
-                            <p className="text-[10px] text-[#3a684d] font-mono font-medium">
-                              {evo.impact ?? evo.rationale}
-                            </p>
-                          </div>
-                        )}
+                        <button className="px-4 py-2 border border-[#715b3e] text-[#715b3e] uppercase text-[9px] tracking-wider hover:bg-[#715b3e] hover:text-[#fff9ee] transition-all shrink-0 flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3" />
+                          Approve &amp; Evolve
+                        </button>
                       </div>
-                      <button className="px-4 py-2 border border-[#715b3e] text-[#715b3e] uppercase text-[9px] tracking-wider hover:bg-[#715b3e] hover:text-[#fff9ee] transition-all shrink-0 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3" />
-                        Approve &amp; Evolve
-                      </button>
-                    </div>
-                  ))}
-                  {(d.policy_evolution_recommendations ?? []).length === 0 && (
-                    <div className="py-6 text-center text-xs font-light text-[#817a67]">
-                      No evolution recommendations at this time. Constitutional alignment is optimal.
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </AccordionCard>
 
             </div>
+
+            {/* Contextual Journey CTA */}
+            <div className="border border-[#715b3e]/20 bg-[#fffbf2] p-6 text-center space-y-3 mt-8">
+              <h4 className="text-xs font-semibold text-[#715b3e] uppercase tracking-wider">Guided Journey: Step 4</h4>
+              <p className="text-xs text-[#6b5d4f] font-light">Deeply audit compliance paths and alternative scenarios in the Forensic workspace.</p>
+              <Link href="/decision/DEC-1495" className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#fff9ee] bg-[#715b3e] px-6 py-3 hover:bg-[#644f33] shadow-md transition-all">
+                Open Forensic Reconstruction Demo &rarr;
+              </Link>
+            </div>
+
           </div>
         )}
       </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import VerdictHeroCard from "../../components/VerdictHeroCard";
 import DecisionDNA from "../../components/DecisionDNA";
@@ -24,6 +25,59 @@ interface LiveStats {
   avgRisk: number;
 }
 
+interface AccordionLayerProps {
+  title: string;
+  readTime: string;
+  takeaway: string;
+  emptyState: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+function AccordionLayer({
+  title,
+  readTime,
+  takeaway,
+  emptyState,
+  isOpen,
+  onToggle,
+  children
+}: AccordionLayerProps) {
+  return (
+    <div className="border border-outline-variant/15 bg-surface-container-low/20 shadow-sm w-full transition-all duration-300">
+      <button
+        onClick={onToggle}
+        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[#715b3e]/5 transition-colors border-b border-[#b9b29c]/10"
+      >
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-850">{title}</h3>
+            <span className="text-[9px] font-mono text-[#817a67] uppercase bg-[#fffbf2] border border-[#b9b29c]/30 px-1.5 py-0.5 rounded-sm">
+              {readTime}
+            </span>
+          </div>
+          <p className="text-[11px] text-[#6b5d4f] font-light italic">{takeaway}</p>
+        </div>
+        <span className="text-[#715b3e] text-lg font-bold">
+          {isOpen ? "−" : "+"}
+        </span>
+      </button>
+      
+      {isOpen ? (
+        <div className="p-5 bg-surface transition-all duration-300">
+          {children}
+        </div>
+      ) : (
+        <div className="px-5 py-3 bg-[#fffbf2] text-[10px] text-stone-400 italic font-mono flex items-center gap-2">
+          <span>&bull;</span>
+          <span>{emptyState}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CommandCenterPage() {
   const [selectedScenarioKey, setSelectedScenarioKey] = useState<keyof typeof SCENARIOS>("vendor_approval");
   const [customProposal, setCustomProposal] = useState("");
@@ -31,6 +85,12 @@ export default function CommandCenterPage() {
   const [showDemoOverlay, setShowDemoOverlay] = useState(false);
   const [liveStats, setLiveStats] = useState<LiveStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+
+  // Collapsible Accordion states
+  const [isReasoningOpen, setIsReasoningOpen] = useState(false);
+  const [isEvidenceOpen, setIsEvidenceOpen] = useState(false);
+  const [isSimulationOpen, setIsSimulationOpen] = useState(false);
+  const [isAuditOpen, setIsAuditOpen] = useState(false);
 
   const scenario = SCENARIOS[selectedScenarioKey];
 
@@ -47,7 +107,6 @@ export default function CommandCenterPage() {
         setLiveStats({ totalDecisions: data.total ?? items.length, blockedCount: blocked, avgRisk });
       })
       .catch(() => {
-        // Graceful degradation — show mock stats
         setLiveStats({ totalDecisions: 50, blockedCount: 31, avgRisk: 58 });
       })
       .finally(() => setStatsLoading(false));
@@ -203,7 +262,7 @@ export default function CommandCenterPage() {
         </aside>
 
         {/* ── RIGHT PANEL: Main Workstation ── */}
-        <main className="flex-1 min-w-0 space-y-5 pb-10 lg:pb-20">
+        <main className="flex-1 min-w-0 space-y-6 pb-10 lg:pb-20">
 
           {/* Page title strip */}
           <div className="flex items-start justify-between gap-4 pt-4 pb-2 border-b border-[#b9b29c]/10">
@@ -231,67 +290,114 @@ export default function CommandCenterPage() {
           {/* Live Flow Visualizer */}
           <GovernanceFlowVisualizer />
 
-          {/* Engine navigation bar */}
-          <div className="flex flex-wrap gap-2 text-[9px] font-mono uppercase text-[#817a67]">
-            {[
-              { label: "Board", icon: Play, id: "board-debate-section" },
-              { label: "Verdict", icon: Shield, id: "verdict-section" },
-              { label: "Regulatory", icon: BarChart2, id: "regulatory-review-section" },
-              { label: "Adversarial", icon: ShieldAlert, id: "adversarial-findings-section" },
-              { label: "Simulation", icon: BarChart2, id: "enterprise-simulation-section" },
-            ].map(({ label, icon: Icon, id }) => (
-              <button
-                key={id}
-                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                className="flex items-center gap-1 px-2 py-1 border border-[#b9b29c]/15 bg-surface hover:border-[#715b3e]/30 hover:text-[#715b3e] transition-colors"
-              >
-                <Icon className="w-3 h-3" />
-                {label}
-                <ArrowRight className="w-2.5 h-2.5" />
-              </button>
-            ))}
+          {/* ── 1. EXECUTIVE LAYER (Always Open) ── */}
+          <div className="space-y-4">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/20 pb-1.5">
+              // LAYER 1: EXECUTIVE LAYER
+            </span>
+            <div id="verdict-section">
+              <VerdictHeroCard
+                verdict={scenario.verdict}
+                confidence={scenario.confidence}
+                risk={scenario.risk}
+                evidence={scenario.evidence}
+                takeaway={scenario.takeaway}
+              />
+            </div>
+            <div id="board-debate-section">
+              <ExecutiveBoardSpotlight
+                members={scenario.board.members}
+                consensusSummary={scenario.board.consensusSummary}
+                finalVerdict={scenario.board.finalVerdict}
+              />
+            </div>
           </div>
 
-          {/* 1. Board Debate */}
-          <div id="board-debate-section">
-            <ExecutiveBoardSpotlight
-              members={scenario.board.members}
-              consensusSummary={scenario.board.consensusSummary}
-              finalVerdict={scenario.board.finalVerdict}
-            />
+          {/* ── 2. REASONING LAYER ── */}
+          <div className="space-y-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block">
+              // LAYER 2: REASONING LAYER
+            </span>
+            <AccordionLayer
+              title="Constitutional Analysis"
+              readTime="15s scan"
+              takeaway="Evaluates alignment with safety, financial, and regulatory guidelines."
+              emptyState="Constitutional checks verified. Click to expand alignment scorecard."
+              isOpen={isReasoningOpen}
+              onToggle={() => setIsReasoningOpen(!isReasoningOpen)}
+            >
+              <ConstitutionScorecardCard
+                scores={scenario.constitutions.scores}
+                conflicts={scenario.constitutions.conflicts}
+              />
+            </AccordionLayer>
           </div>
 
-          {/* 2. Verdict Hero */}
-          <div id="verdict-section">
-            <VerdictHeroCard
-              verdict={scenario.verdict}
-              confidence={scenario.confidence}
-              risk={scenario.risk}
-              evidence={scenario.evidence}
-              takeaway={scenario.takeaway}
-            />
+          {/* ── 3. EVIDENCE LAYER ── */}
+          <div className="space-y-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block">
+              // LAYER 3: EVIDENCE LAYER
+            </span>
+            <AccordionLayer
+              title="Decision DNA & Regulatory Review"
+              readTime="20s read"
+              takeaway="Exposes core decision metrics, driver weights, and framework compliance."
+              emptyState="Factual grounding and regulatory compliance checked. Click to open details."
+              isOpen={isEvidenceOpen}
+              onToggle={() => setIsEvidenceOpen(!isEvidenceOpen)}
+            >
+              <div className="space-y-4">
+                <DecisionDNA dna={scenario.dna} />
+                <RegulatoryAlignmentCard frameworks={scenario.regulatory} />
+              </div>
+            </AccordionLayer>
           </div>
 
-          {/* 3. Decision DNA */}
-          <DecisionDNA dna={scenario.dna} />
+          {/* ── 4. SIMULATION LAYER ── */}
+          <div className="space-y-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block">
+              // LAYER 4: SIMULATION LAYER
+            </span>
+            <AccordionLayer
+              title="Enterprise Simulation"
+              readTime="15s scan"
+              takeaway="Monte Carlo simulations forecasting future downstream costs and liabilities."
+              emptyState="Risk projections mapped. Click to expand simulation charts."
+              isOpen={isSimulationOpen}
+              onToggle={() => setIsSimulationOpen(!isSimulationOpen)}
+            >
+              <EnterpriseForecastCard scenarios={scenario.simulation} />
+            </AccordionLayer>
+          </div>
 
-          {/* 4. Regulatory Scorecard */}
-          <RegulatoryAlignmentCard frameworks={scenario.regulatory} />
+          {/* ── 5. AUDIT LAYER ── */}
+          <div className="space-y-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block">
+              // LAYER 5: AUDIT LAYER
+            </span>
+            <AccordionLayer
+              title="Adversarial Lab & Narrative Timeline"
+              readTime="30s read"
+              takeaway="Red-team exploit analysis and the complete step-by-step GRC audit timeline."
+              emptyState="Security scans and narrative checkpoints completed. Click to review logs."
+              isOpen={isAuditOpen}
+              onToggle={() => setIsAuditOpen(!isAuditOpen)}
+            >
+              <div className="space-y-4">
+                <GovernanceAttackReportCard report={scenario.adversarial} />
+                <NarrativeTimelineStepper steps={scenario.timelineNodes} />
+              </div>
+            </AccordionLayer>
+          </div>
 
-          {/* 5. Adversarial Lab */}
-          <GovernanceAttackReportCard report={scenario.adversarial} />
-
-          {/* 6. Enterprise Simulation */}
-          <EnterpriseForecastCard scenarios={scenario.simulation} />
-
-          {/* 7. Constitutional Analysis */}
-          <ConstitutionScorecardCard
-            scores={scenario.constitutions.scores}
-            conflicts={scenario.constitutions.conflicts}
-          />
-
-          {/* 8. Narrative Timeline */}
-          <NarrativeTimelineStepper steps={scenario.timelineNodes} />
+          {/* Contextual Journey CTA */}
+          <div className="border border-[#715b3e]/20 bg-[#fffbf2] p-6 text-center space-y-3 mt-8">
+            <h4 className="text-xs font-semibold text-[#715b3e] uppercase tracking-wider">Guided Journey: Step 2</h4>
+            <p className="text-xs text-[#6b5d4f] font-light">Audits are compiled continuously into the system archives.</p>
+            <Link href="/decision-history" className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#fff9ee] bg-[#715b3e] px-6 py-3 hover:bg-[#644f33] shadow-md transition-all">
+              View Enterprise Audit Trail &rarr;
+            </Link>
+          </div>
 
         </main>
       </div>
