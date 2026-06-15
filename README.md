@@ -5,7 +5,7 @@
 ### Demo Video
 > [!IMPORTANT]
 > **Start here:** Watch the 2-minute walkthrough before exploring the codebase.
-> [![Watch Demo](https://img.shields.io/badge/Watch%20Demo%20Video-red?style=for-the-badge)](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+[![Watch Demo](https://img.shields.io/badge/Watch%20Demo%20Video-red?style=for-the-badge)](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
 
 ---
 
