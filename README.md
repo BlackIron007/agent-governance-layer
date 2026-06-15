@@ -3,7 +3,10 @@
 ## AI Governance For Decisions That Matter
 
 ### Demo Video
-[Watch the full project walkthrough](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+> [!IMPORTANT]
+> **Start here:** Watch the 2-minute walkthrough before exploring the codebase. [![Watch Demo](https://img.shields.io/badge/Watch%20Demo%20Video-red?style=for-the-badge)](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+
+---
 
 Modern AI systems can recommend vendors, approve loans, screen candidates, allocate resources, trigger security actions, and influence critical business operations.
 
@@ -48,7 +51,7 @@ It is an auditable governance verdict.
 
 A complete walkthrough of Trust Console IQ is available below:
 
-[**Video Demo:**](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
+[**Video Demo**](https://drive.google.com/file/d/1nNPOlKOUbdmrKxjXlgt7VbdR4fhcjjB6/view?usp=sharing)
 
 The demo covers:
 
