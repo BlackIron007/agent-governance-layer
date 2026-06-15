@@ -124,6 +124,35 @@ export default function DecisionHistoryPage() {
           </div>
         </header>
 
+        {/* ── Governance Throughput Summary ── */}
+        <section className="w-full bg-[#f5eddd] border border-[#b9b29c]/25 p-5 mb-6 shadow-sm animate-fadeIn">
+          <span className="text-[9px] font-mono uppercase tracking-widest text-[#817a67] font-bold block border-b border-[#b9b29c]/10 pb-1.5 mb-3">
+            // Governance Throughput Summary
+          </span>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-[#fffbf2] border border-[#b9b29c]/15 p-3 text-center">
+              <span className="text-2xl font-light font-mono text-stone-800">180</span>
+              <span className="block text-[8px] uppercase tracking-wider text-[#817a67] font-medium mt-1">Decisions Governed Today</span>
+            </div>
+            <div className="bg-[#fffbf2] border border-[#b9b29c]/15 p-3 text-center">
+              <span className="text-2xl font-light font-mono text-emerald-700">77%</span>
+              <span className="block text-[8px] uppercase tracking-wider text-[#817a67] font-medium mt-1">Approval Rate</span>
+            </div>
+            <div className="bg-[#fffbf2] border border-[#b9b29c]/15 p-3 text-center">
+              <span className="text-2xl font-light font-mono text-stone-800">4.2s</span>
+              <span className="block text-[8px] uppercase tracking-wider text-[#817a67] font-medium mt-1">Average Governance Time</span>
+            </div>
+            <div className="bg-[#fffbf2] border border-[#b9b29c]/15 p-3 text-center">
+              <span className="text-2xl font-light font-mono text-[#9e422c]">27</span>
+              <span className="block text-[8px] uppercase tracking-wider text-[#817a67] font-medium mt-1">Total Attacks Simulated</span>
+            </div>
+            <div className="bg-[#fffbf2] border border-[#b9b29c]/15 p-3 text-center">
+              <span className="text-2xl font-light font-mono text-amber-700">51</span>
+              <span className="block text-[8px] uppercase tracking-wider text-[#817a67] font-medium mt-1">Conflicts Prevented</span>
+            </div>
+          </div>
+        </section>
+
         {/* Error banner */}
         {error && (
           <div className="w-full border border-amber-500/25 bg-amber-500/5 p-3 mb-4 flex items-center justify-between text-xs text-amber-700 animate-fadeIn">

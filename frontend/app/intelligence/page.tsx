@@ -267,6 +267,16 @@ export default function IntelligencePage() {
           </div>
         </section>
 
+        {/* ── Most Important Governance Finding Today (Minor Correction 3) ── */}
+        <section className="w-full bg-[#f5eddd] border border-[#9e422c]/30 p-5 mb-6 shadow-sm animate-fadeIn">
+          <span className="text-[9px] font-mono uppercase tracking-widest text-[#9e422c] font-bold block border-b border-[#9e422c]/15 pb-1 mb-2">
+            // Most Important Governance Finding Today
+          </span>
+          <p className="text-sm font-light text-[#373223] leading-relaxed">
+            Procurement Agent drift increased 0.8% after policy update. Constitutional alignment remains stable but monitoring threshold has been crossed.
+          </p>
+        </section>
+
         {/* Loading state */}
         {loading ? (
           <SkeletonIntelligencePage />

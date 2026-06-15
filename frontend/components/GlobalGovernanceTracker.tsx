@@ -26,25 +26,49 @@ export default function GlobalGovernanceTracker() {
 
   // Determine active index based on route name
   let activeIdx = 0; // Default to overview (Landing)
+  let decisionIdLabel = "SYSTEM_IDLE";
   if (pathname === "/") {
     activeIdx = -1; // Special Overview layout: highlight all overview nodes
+    decisionIdLabel = "DEC-PREVIEW";
   } else if (pathname.includes("/command-center")) {
     activeIdx = 2; // Active = Executive Board
+    decisionIdLabel = "DEC-1495";
   } else if (pathname.includes("/decision-history")) {
     activeIdx = 8; // Active = Audit Record (history)
+    decisionIdLabel = "DEC-LEDGER";
   } else if (pathname.includes("/decision/")) {
     activeIdx = 8; // Active = Audit Record (details)
+    // Extract decision id from route if possible
+    const match = pathname.match(/\/decision\/(DEC-\d+)/);
+    decisionIdLabel = match ? match[1] : "DEC-1495";
   } else if (pathname.includes("/intelligence")) {
     activeIdx = 9; // Active = Intelligence
+    decisionIdLabel = "DRIFT-MONITOR";
   }
+
+  // Timestamps for completing stages (mocked relative to active index)
+  const timestamps = [
+    "21:11:00",
+    "21:11:02",
+    "21:11:04",
+    "21:11:06",
+    "21:11:08",
+    "21:11:10",
+    "21:11:12",
+    "21:11:14",
+    "21:11:14",
+    "21:11:15"
+  ];
 
   return (
     <div className="w-full bg-[#f5eddd] border-b border-[#b9b29c]/25 py-2.5 px-4 md:px-6 shadow-sm">
       <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
         {/* Left Side: Indicator Label */}
-        <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-mono text-[#817a67]">
+        <div className="flex items-center gap-3 shrink-0 text-[10px] font-mono text-[#817a67]">
           <Activity className="w-3.5 h-3.5 text-[#715b3e] animate-pulse" />
-          <span>GOVERNANCE SYSTEM ACTIVE PATHWAY:</span>
+          <span className="flex items-center gap-1">
+            GOVERNANCE LINEAGE: <strong className="text-[#715b3e] font-semibold bg-[#715b3e]/10 px-1.5 py-0.5 border border-[#715b3e]/20">{decisionIdLabel}</strong>
+          </span>
         </div>
 
         {/* Right Side: Horizontal flow */}
@@ -65,16 +89,29 @@ export default function GlobalGovernanceTracker() {
             return (
               <div key={stage.id} className="flex items-center gap-1">
                 <div 
-                  className={`flex items-center gap-1 px-2 py-0.5 border text-[9px] uppercase tracking-wider font-mono transition-all duration-300 ${
+                  className={`flex flex-col items-center px-2 py-1 border text-[9px] uppercase font-mono transition-all duration-300 relative ${
                     isActive
-                      ? "bg-[#715b3e] text-[#fff9ee] border-[#715b3e] scale-105 font-bold shadow-sm"
+                      ? "bg-[#715b3e] text-[#fff9ee] border-[#715b3e] scale-105 font-bold shadow-sm animate-pulse"
                       : isComplete
                       ? "text-[#3a684d] border-[#3a684d]/30 bg-[#3a684d]/5"
                       : "text-stone-400 border-stone-200 opacity-60"
                   }`}
                 >
-                  {isComplete && <CheckCircle2 className="w-2.5 h-2.5 text-[#3a684d] shrink-0" />}
-                  <span>{stage.label}</span>
+                  <div className="flex items-center gap-1 font-semibold">
+                    {isComplete && <CheckCircle2 className="w-2.5 h-2.5 text-[#3a684d] shrink-0" />}
+                    {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#fff9ee] animate-ping shrink-0" />}
+                    <span>{stage.label}</span>
+                  </div>
+                  {isComplete && (
+                    <span className="text-[7.5px] font-mono text-stone-500 font-light block mt-0.5 opacity-80">
+                      {timestamps[idx]}
+                    </span>
+                  )}
+                  {isActive && (
+                    <span className="text-[7.5px] font-mono text-[#fff9ee]/80 font-semibold block mt-0.5 animate-pulse">
+                      ACTIVE
+                    </span>
+                  )}
                 </div>
                 {idx < LIFECYCLE_STAGES.length - 1 && (
                   <ChevronRight className="w-3 h-3 text-stone-300" />
