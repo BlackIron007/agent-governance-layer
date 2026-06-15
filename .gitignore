@@ -1,6 +1,10 @@
 # Virtual environment
 venv/
+
+# Environment files
 .env
+.env.*
+!.env.example
 
 # Python cache
 __pycache__/
@@ -13,62 +17,36 @@ __pycache__/
 # OS files
 .DS_Store
 
+# Logs
+*.log
+
 # Database files
 *.db
+*.sqlite3
+*.db-journal
 data/
+
+# Build and coverage
+dist/
+coverage/
+.pytest_cache/
 
 # Frontend (Next.js & Node)
 node_modules/
 .next/
 out/
 build/
-.env*.local
-
-# Test reports
-analysis_results.md
-/tests
-/scratch
-/frontend_audit_screenshots
-/frontend_sprint2_screenshots
+frontend/node_modules
+frontend/.next
 
 # VS Code Extensions
 .qodo/
 
-ARCHITECTURE_BLUEPRINT.md
-board_decision_output.json
-CONSTITUTION_AND_MEMORY_VISION.md
-constitution_evolution_output.json
-CONSTITUTIONAL_EVOLUTION_VISION.md
-DECISION_PIPELINE_DESIGN.md
-DEMO_FEATURES_SUMMARY.md
-EXECUTIVE_BOARD_VISION.md
-governance_intelligence_output.json
-GOVERNANCE_INTELLIGENCE_VISION.md
-GOVERNANCE_LAYER_SUMMARY.md
-MICROSOFT_IQ_INTEGRATION_PLAN.md
-PIPELINE_MIGRATION_SUMMARY.md
-PROCUREMENT_BOARD_DEMO.md
-TRUST_CONSOLE_IQ_ROADMAP.md
-ENTERPRISE_SIMULATION_VISION.md
-ADVERSARIAL_GOVERNANCE_LAB_VISION.md
-MULTI_CONSTITUTION_GOVERNANCE_VISION.md
-REGULATORY_INTELLIGENCE_VISION.md
-SYSTEM_HARDENING_REPORT.md
-FRONTEND_AUDIT_REPORT.md
-FRONTEND_VISION.md
-DEMO_MODE_SPEC.md
-FRONTEND_MIGRATION_PLAN.md
-WIREFRAME_SPEC.md
-FINAL_FRONTEND_ARCHITECTURE.md
-FINAL_FRONTEND_IMPLEMENTATION_SPEC.md
-FRONTEND_PHASE1_IMPLEMENTATION_REPORT.md
-FRONTEND_BACKEND_CONTRACTS.md
-FRONTEND_SPRINT2_REPORT.md
-JUDGE_IMPACT_SPRINT_REPORT.md
-WAR_ROOM_SPRINT_REPORT.md
-WAR_ROOM_V2_REPORT.md
-
-package-lock.json
-package.json
-
+# Testing and Screen captures
+/scratch
+/frontend_audit_screenshots
+/frontend_sprint2_screenshots
 capture_screenshots.js
+
+# Archived documentation
+docs/archived/
